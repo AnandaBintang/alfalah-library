@@ -1,61 +1,110 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🚀 PERPUSTAKAAN SMP ALFALAH ASSALAM
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Dokumentasi proyek ini menjelaskan alur kerja dalam pengembangan fitur menggunakan Git branching strategy dan standar penamaan commit. Proyek ini menggunakan Laravel sebagai backend framework dengan autentikasi JWT.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📂 Struktur Branch
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Branch utama yang digunakan dalam proyek ini:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- `main`: Branch utama yang berisi kode stabil dan siap rilis.
+- `develop`: Branch pengembangan aktif. Semua fitur baru di-merge ke sini.
 
-## Learning Laravel
+### ⬆️ Alur Pembuatan Branch Fitur
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Setiap fitur baru dikembangkan pada branch terpisah yang diturunkan dari `develop` dengan format:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```
+nama-pengembang/nama-fitur
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Contoh:**
+```
+bintang/login-page
+gerrard/export-excel
+```
 
-## Laravel Sponsors
+> Setelah fitur selesai, ajukan pull request (PR) ke `develop`. Jangan langsung merge ke `main`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 📝 Konvensi Penamaan Commit
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Gunakan format penamaan commit berikut agar konsisten dan mudah ditelusuri:
 
-## Contributing
+```
+<TYPE>: <short description>
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Jenis Commit:
+| Tag        | Deskripsi                                      |
+|------------|-----------------------------------------------|
+| `FEAT`     | Penambahan fitur baru                         |
+| `FIX`      | Perbaikan bug                                 |
+| `CHORE`    | Perubahan non-fungsional (e.g. dependencies)  |
+| `REFACTOR` | Perubahan kode tanpa mengubah perilaku        |
+| `DOCS`     | Perubahan dokumentasi                         |
+| `TEST`     | Penambahan/perbaikan testing                  |
+| `STYLE`    | Format kode tanpa mengubah logic              |
+| `PERF`     | Peningkatan performa                          |
+| `CI`       | Konfigurasi CI/CD                             |
+| `BUILD`    | Perubahan sistem build atau package manager   |
 
-## Code of Conduct
+### Contoh Commit:
+```
+FEAT: implement login with JWT
+FIX: validate email field on register
+CHORE: update composer packages
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## ⚙️ Setup Project
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Berikut langkah untuk setup project di lokal:
 
-## License
+```bash
+# Install semua dependency PHP
+composer install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Generate application key
+php artisan key:generate
+
+# Jalankan migrasi database
+php artisan migrate
+
+# Seed database dengan data awal
+php artisan db:seed
+```
+
+> Pastikan Anda telah mengatur konfigurasi database pada file `.env` sebelum menjalankan perintah di atas.
+
+---
+
+## 🔁 Alur Penggabungan (Merge Flow)
+
+1. Buat branch dari `develop`
+2. Kembangkan fitur Anda
+3. Push ke remote repository
+4. Ajukan Pull Request ke `develop`
+5. Setelah semua fitur stabil → merge `develop` ke `main` untuk rilis
+
+---
+
+## 👥 Kolaborasi Tim
+
+- Lakukan `git pull origin develop` sebelum memulai fitur baru.
+- Gunakan draft PR untuk memantau progress.
+- Sertakan deskripsi lengkap dan jelas pada setiap PR.
+- Review dan testing kode sebelum di-merge ke branch `develop`.
+
+---
+
+## 📌 Catatan
+
+- Jangan commit file `.env` atau file konfigurasi sensitif lainnya.
+- Gunakan `.gitignore` untuk mengecualikan file yang tidak diperlukan.
+- Gunakan tools seperti Postman atau Insomnia untuk menguji endpoint API.
+
+---
