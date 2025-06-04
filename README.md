@@ -98,6 +98,7 @@ php artisan db:seed
 - Gunakan draft PR untuk memantau progress.
 - Sertakan deskripsi lengkap dan jelas pada setiap PR.
 - Review dan testing kode sebelum di-merge ke branch `develop`.
+- Jangan lupa jalankan `./vendor/bin/pint` sebelum commit
 
 ---
 
