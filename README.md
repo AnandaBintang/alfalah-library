@@ -106,5 +106,7 @@ php artisan db:seed
 - Jangan commit file `.env` atau file konfigurasi sensitif lainnya.
 - Gunakan `.gitignore` untuk mengecualikan file yang tidak diperlukan.
 - Gunakan tools seperti Postman atau Insomnia untuk menguji endpoint API.
+- Setiap membuat contoller atau view baru pastikan menggunakan livewire.
+- Pastikan menggunakan `w-10/12 mx-auto` untuk container.
 
 ---
