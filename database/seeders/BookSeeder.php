@@ -13,13 +13,13 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        $publisher = Publisher::all();
-        Book::factory()
-            ->count(50)
-            ->create()
-            ->each(function ($book) use ($publisher) {
-                $book->publisher_id = $publisher->random()->id;
-                $book->save();
-            });
+        //        $publisher = Publisher::all();
+        //        Book::factory()
+        //            ->count(100)
+        //            ->create()
+        //            ->each(function ($book) use ($publisher) {
+        //                $book->publisher_id = $publisher->random()->id;
+        //                $book->save();
+        //            });
     }
 }

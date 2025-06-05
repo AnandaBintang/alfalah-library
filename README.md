@@ -98,6 +98,7 @@ php artisan db:seed
 - Gunakan draft PR untuk memantau progress.
 - Sertakan deskripsi lengkap dan jelas pada setiap PR.
 - Review dan testing kode sebelum di-merge ke branch `develop`.
+- Jangan lupa jalankan `./vendor/bin/pint` sebelum commit
 
 ---
 
@@ -106,5 +107,7 @@ php artisan db:seed
 - Jangan commit file `.env` atau file konfigurasi sensitif lainnya.
 - Gunakan `.gitignore` untuk mengecualikan file yang tidak diperlukan.
 - Gunakan tools seperti Postman atau Insomnia untuk menguji endpoint API.
+- Setiap membuat contoller atau view baru pastikan menggunakan livewire.
+- Pastikan menggunakan `w-10/12 mx-auto` untuk container.
 
 ---

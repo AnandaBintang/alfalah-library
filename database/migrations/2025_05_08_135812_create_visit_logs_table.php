@@ -18,6 +18,7 @@ return new class extends Migration
             $table->datetime('check_out_time')->nullable();
             $table->text('purpose')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

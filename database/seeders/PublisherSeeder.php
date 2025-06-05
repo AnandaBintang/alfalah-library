@@ -12,6 +12,6 @@ class PublisherSeeder extends Seeder
      */
     public function run(): void
     {
-        Publisher::factory()->count(50)->create();
+        Publisher::factory()->count(456)->create();
     }
 }

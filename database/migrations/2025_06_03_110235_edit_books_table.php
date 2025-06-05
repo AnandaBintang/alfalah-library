@@ -6,25 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-  /**
-   * Run the migrations.
-   */
-  public function up(): void
-  {
-    Schema::table('books', function (Blueprint $table) {
-      $table->dropColumn('classification_code');
-      $table->integer('rack_location')->nullable()->change();
-    });
-  }
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('books', function (Blueprint $table) {
+            $table->dropColumn('classification_code');
+            $table->integer('rack_location')->nullable()->change();
+        });
+    }
 
-  /**
-   * Reverse the migrations.
-   */
-  public function down(): void
-  {
-    Schema::table('books', function (Blueprint $table) {
-      $table->string('classification_code')->nullable();
-      $table->integer('rack_location')->nullable(false)->change();
-    });
-  }
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('books', function (Blueprint $table) {
+            $table->string('classification_code')->nullable();
+            $table->integer('rack_location')->nullable(false)->change();
+        });
+    }
 };

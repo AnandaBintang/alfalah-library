@@ -12,6 +12,6 @@ class LoanExtensionSeeder extends Seeder
      */
     public function run(): void
     {
-        LoanExtension::factory()->count(20)->create();
+        LoanExtension::factory()->count(100)->create();
     }
 }

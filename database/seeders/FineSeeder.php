@@ -12,6 +12,6 @@ class FineSeeder extends Seeder
      */
     public function run(): void
     {
-        Fine::factory()->count(15)->create();
+        Fine::factory()->count(100)->create();
     }
 }

@@ -12,6 +12,6 @@ class BookLoanStatsSeeder extends Seeder
      */
     public function run(): void
     {
-        BookLoanStats::factory()->count(2000)->create();
+        BookLoanStats::factory()->count(150)->create();
     }
 }

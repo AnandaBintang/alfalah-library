@@ -6,6 +6,8 @@ use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -22,6 +24,8 @@ class DatabaseSeeder extends Seeder
             FineSeeder::class,
             BookLoanStatsSeeder::class,
             DonationSeeder::class,
+            CategorySeeder::class,
+            VisitLogSeeder::class,
         ]);
     }
 }
