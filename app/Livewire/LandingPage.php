@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Title('Perpustakaan Al-Falah')]
+#[Layout('livewire.layouts.app')]
 class LandingPage extends Component
 {
     public function render()
