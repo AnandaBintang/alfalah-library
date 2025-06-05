@@ -11,12 +11,21 @@
   @livewireStyles
 </head>
 <body>
+  {{--  Running Information--}}
+  <div class="bg-yellow-100 text-yellow-800 py-3 px-4 text-sm font-medium overflow-hidden relative">
+    <div class="animate-marquee whitespace-nowrap">
+      📢 Perpustakaan buka setiap hari Senin–Jumat pukul 07.00–15.00 | Jangan lupa kembalikan buku tepat waktu! 📚
+    </div>
+  </div>
+  {{--  Running Information--}}
+
   {{--    Navbar --}}
   <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3">
     <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <div class="flex space-x-1.5">
         <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
-        <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 " href="#">SMP main app
+        <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 " href="#">SMP main
+          app
           Alfalah Assalam</a>
       </div>
 
