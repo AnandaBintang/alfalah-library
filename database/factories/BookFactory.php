@@ -22,6 +22,7 @@ class BookFactory extends Factory
             'isbn' => $this->faker->isbn13(),
             'stock' => $this->faker->randomNumber(),
             'rack_location' => $this->faker->numberBetween(1, 100),
+          'cover_image_path' => 'cover-books/cover-book-1.jpg'
         ];
     }
 }
