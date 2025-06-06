@@ -29,6 +29,7 @@ class LoanExtensionFactory extends Factory
                 ApprovalStatusEnum::PENDING->value,
                 ApprovalStatusEnum::APPROVED->value,
                 ApprovalStatusEnum::REJECTED->value,
+
             ]),
         ];
     }
