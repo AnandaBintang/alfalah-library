@@ -29,6 +29,7 @@ return new class extends Migration
             $table->text('abstract')->nullable();
             $table->string('cover_image_path')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

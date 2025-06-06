@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\LoanChartResource\Widgets;
 
-use App\Enum\StatusLoanBook;
+use App\Enum\StatusLoanBookEnum;
 use App\Models\Loan;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
@@ -28,7 +28,7 @@ class LoanChart extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-        $data = Trend::query(Loan::where('status', StatusLoanBook::BORROWED->value))
+        $data = Trend::query(Loan::where('status', StatusLoanBookEnum::BORROWED->value))
             ->between(
                 start: Carbon::parse($this->filterFormData['date_start']),
                 end: Carbon::parse($this->filterFormData['date_end']),

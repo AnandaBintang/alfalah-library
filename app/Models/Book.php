@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Book extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -55,5 +56,10 @@ class Book extends Model
     public function loans()
     {
         return $this->hasMany(Loan::class);
+    }
+
+    public function cartItem(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\enum;
+namespace App\Enum;
 
 enum ApprovalStatusEnum: string
 {
-    case PENDING = 'pending';
     case APPROVED = 'approved';
     case REJECTED = 'rejected';
+    case PENDING = 'pending';
 }
