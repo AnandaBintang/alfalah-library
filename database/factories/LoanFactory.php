@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enum\StatusLoanBookEnum;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -30,8 +31,8 @@ class LoanFactory extends Factory
             'due_date' => $dueDate->format('Y-m-d'),
             'return_date' => $isReturned ? $this->faker->dateTimeBetween($loanDate, $dueDate)->format('Y-m-d') : null,
             'status' => $isReturned
-              ? 'returned'
-              : ($dueDate < now() ? 'overdue' : 'borrowed'),
+              ? StatusLoanBookEnum::APPROVED->value
+              : ($dueDate < now() ? StatusLoanBookEnum::OVERDUE->value : StatusLoanBookEnum::APPROVED->value),
         ];
     }
 }
