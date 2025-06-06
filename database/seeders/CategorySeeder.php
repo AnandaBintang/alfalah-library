@@ -24,6 +24,21 @@ class CategorySeeder extends Seeder
                 $book->save();
             });
 
+        $bukutestCategory = Category::create([
+            'name' => 'bukutest',
+        ]);
+
+        $megalodon = Book::create([
+            'title' => 'Megalodon',
+            'subtitle' => 'Megalodon',
+            'isbn' => 1231314,
+            'stock' => 3,
+            'rack_location' => 29,
+            'cover_image_path' => 'cover-books/cover-book-1.jpg',
+        ]);
+
+        $megalodon->categories()->attach($bukutestCategory->id);
+
         $categories = Category::factory()->count(10)->create();
 
         // Pasangkan kategori ke setiap buku (pivot seeding)
