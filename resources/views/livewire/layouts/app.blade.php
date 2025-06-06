@@ -10,13 +10,19 @@
   @vite('resources/js/app.js')
   @livewireStyles
 </head>
-<body>
+<body class="flex flex-col min-h-screen"">
+
+  {{--WireUI Notif--}}
+  <x-notifications position="top-end"/>
+  {{--WireUI Notif--}}
+
   {{--    Navbar --}}
-  <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3">
+  <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
     <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <div class="flex space-x-1.5">
         <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
-        <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 " href="#">SMP
+        <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
+           href="{{ route('book.index') }}" wire:navigate>SMP
           Alfalah Assalam</a>
       </div>
 
@@ -77,18 +83,21 @@
 
 
   {{--    Main Content --}}
+<div class="flex-grow">
   {{ $slot }}
+</div>
   {{--    Main Content --}}
 
 
   {{--    Footer --}}
-  <footer class="max-h-40 w-full">
+  <footer class="w-full ">
     <div class="p-5 bg-blue-600 text-sm flex justify-center text-white font-semibold">
       <p>© {{ date('Y') }} SMP Alfalah Assalam. All rights reserved.</p>
     </div>
   </footer>
   {{--    Footer --}}
-
+  <wireui:scripts/>
+  <script src="//unpkg.com/alpinejs" defer></script>
   @livewireScripts
 </body>
 </html>
