@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\ApprovalStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +20,11 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('quantity')->default(1);
             $table->date('donation_date');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', [
+                ApprovalStatusEnum::PENDING->value,
+                ApprovalStatusEnum::APPROVED->value,
+                ApprovalStatusEnum::REJECTED->value,
+            ])->default(ApprovalStatusEnum::PENDING->value);
             $table->timestamps();
             $table->softDeletes();
         });
