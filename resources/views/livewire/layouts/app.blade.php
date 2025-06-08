@@ -9,8 +9,16 @@
   @vite('resources/css/app.css')
   @vite('resources/js/app.js')
   @livewireStyles
+
+  <style>
+.nav-link.active {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+</style>
 </head>
-<body class="flex flex-col min-h-screen"">
+<body class="flex flex-col min-h-screen">
 
   {{--WireUI Notif--}}
   <x-notifications position="top-end"/>
@@ -18,7 +26,7 @@
 
   {{--    Navbar --}}
   <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
-    <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white w-full mx-auto px-4 py-4 flex flex-wrap items-center justify-between shadow">
       <div class="flex space-x-1.5">
         <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
@@ -47,11 +55,11 @@
           <span class="sr-only">Toggle</span>
         </button>
         <button type="button"
-                class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-hidden focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400">
+                class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
           Login
         </button>
         <button type="button"
-                class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
           Sign Up
         </button>
       </div>
@@ -60,10 +68,10 @@
            aria-labelledby="hs-navbar-alignment-collapse">
         <div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
           <a
-            class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "
-            href="#">Fitur</a>
-          <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400" href="#">Layanan</a>
-          <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400" href="#">Lokasi</a>
+            class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "
+            href="#fitur">Fitur</a>
+          <a class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400" href="#layanan">Layanan</a>
+          <a class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400" href="#lokasi">Lokasi</a>
 
           <div class=" md:hidden lg:hidden grid grid-cols-2 gap-3">
             <button type="button"
@@ -100,4 +108,25 @@
   <script src="//unpkg.com/alpinejs" defer></script>
   @livewireScripts
 </body>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const id = entry.target.getAttribute('id');
+            const link = document.querySelector(`a[href="#${id}"]`);
+            if (link) {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                    link.classList.add('active');
+                }
+            }
+        });
+    }, { threshold: 0.6 });
+
+    document.querySelectorAll('div[id]').forEach(section => {
+        observer.observe(section);
+    });
+});
+</script>
 </html>
