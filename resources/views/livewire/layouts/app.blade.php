@@ -11,12 +11,12 @@
   @livewireStyles
 
   <style>
-.nav-link.active {
-    color: #2563eb;
-    font-weight: 700;
-}
+    .nav-link.active {
+      color: #2563eb;
+      font-weight: 700;
+    }
 
-</style>
+  </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
@@ -26,7 +26,8 @@
 
   {{--    Navbar --}}
   <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white w-full mx-auto px-4 py-4 flex flex-wrap items-center justify-between shadow">
+    <nav
+      class="fixed top-0 left-0 right-0 z-50 bg-white w-full mx-auto px-4 py-4 flex flex-wrap items-center justify-between shadow">
       <div class="flex space-x-1.5">
         <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
@@ -54,14 +55,17 @@
           </svg>
           <span class="sr-only">Toggle</span>
         </button>
-        <button type="button"
+
+        @if(!\Illuminate\Support\Facades\Auth::check())
+        <a type="button" href="{{ route('login') }}"
                 class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
           Login
-        </button>
-        <button type="button"
+        </a>
+        <a type="button" href="{{ route('register') }}"
                 class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
           Sign Up
-        </button>
+        </a>
+        @endif
       </div>
       <div id="hs-navbar-alignment"
            class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
@@ -70,19 +74,26 @@
           <a
             class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "
             href="#fitur">Fitur</a>
-          <a class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400" href="#layanan">Layanan</a>
-          <a class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400" href="#lokasi">Lokasi</a>
+          <a
+            class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+            href="#layanan">Layanan</a>
+          <a
+            class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+            href="#lokasi">Lokasi</a>
 
+          @if(!\Illuminate\Support\Facades\Auth::check())
           <div class=" md:hidden lg:hidden grid grid-cols-2 gap-3">
-            <button type="button"
-                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-hidden focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            <a type="button" href="{{ route('login') }}"
+               class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-hidden focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none">
               Login
-            </button>
-            <button type="button"
-                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+            </a>
+            <a type="button" href="{{ route('register') }}"
+               class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
               Sign Up
-            </button>
+            </a>
           </div>
+          @endif
+
         </div>
       </div>
     </nav>
@@ -91,9 +102,9 @@
 
 
   {{--    Main Content --}}
-<div class="flex-grow">
-  {{ $slot }}
-</div>
+  <div class="flex-grow">
+    {{ $slot }}
+  </div>
   {{--    Main Content --}}
 
 
@@ -110,23 +121,23 @@
 </body>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            const id = entry.target.getAttribute('id');
-            const link = document.querySelector(`a[href="#${id}"]`);
-            if (link) {
-                if (entry.isIntersecting) {
-                    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-                    link.classList.add('active');
-                }
-            }
-        });
-    }, { threshold: 0.6 });
+      entries.forEach(entry => {
+        const id = entry.target.getAttribute('id');
+        const link = document.querySelector(`a[href="#${id}"]`);
+        if (link) {
+          if (entry.isIntersecting) {
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            link.classList.add('active');
+          }
+        }
+      });
+    }, {threshold: 0.6});
 
     document.querySelectorAll('div[id]').forEach(section => {
-        observer.observe(section);
+      observer.observe(section);
     });
-});
+  });
 </script>
 </html>

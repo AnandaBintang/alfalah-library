@@ -4,9 +4,10 @@
     <img src="{{ asset('storage/' . $item->book->cover_image_path) }}" alt="{{ $item->book->title }}"
          class="w-16 h-20 object-cover rounded-lg shadow-sm">
     <div class="flex flex-col">
-      <h3 class="font-semibold text-base sm:text-lg text-gray-800">{{ $item->book->title }}</h3>
+      <h3
+        class="font-semibold text-base sm:text-lg text-gray-800">{{ \Illuminate\Support\Str::limit($item->book->title, 13) }}</h3>
       @if ($item->book->subtitle)
-        <p class="text-sm text-gray-500">{{ $item->book->subtitle }}</p>
+        <p class="text-sm text-gray-500">{{ \Illuminate\Support\Str::limit($item->book->subtitle, 29) }}</p>
       @endif
     </div>
   </div>

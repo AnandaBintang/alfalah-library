@@ -16,13 +16,16 @@ class Loan extends Model
         'loan_date',
         'due_date',
         'return_date',
-        'status',
+        'confirmation_status',
+        'loan_status',
+        'timeline_status',
     ];
 
     protected $casts = [
         'loan_date' => 'date',
         'due_date' => 'date',
         'return_date' => 'date',
+
     ];
 
     public function user()

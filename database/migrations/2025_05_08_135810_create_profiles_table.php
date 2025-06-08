@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('library_card_image_path')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

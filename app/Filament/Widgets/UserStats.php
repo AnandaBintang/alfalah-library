@@ -9,6 +9,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class UserStats extends BaseWidget
 {
+    protected static ?string $pollingInterval = '10s';
+
     protected function getStats(): array
     {
         return [

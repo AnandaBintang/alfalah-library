@@ -2,9 +2,13 @@
 
 namespace App\Livewire\App\Cart;
 
+use App\Enum\ConfirmationStatusLoanEnum;
 use App\Enum\StatusCartEnum;
+use App\Enum\StatusCartItemEnum;
 use App\Enum\StatusLoanBookEnum;
+use App\Enum\TimelineStatusEnum;
 use App\Models\Cart as CartModel;
+use App\Models\CartItem as CartItemModel;
 use App\Models\Loan as LoanModel;
 use App\Trait\NotificationsAndDialog;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +25,8 @@ class Cart extends Component
 
     public $cart;
 
+    public $cartItems;
+
     public function mount()
     {
         $this->loadCart();
@@ -29,10 +35,17 @@ class Cart extends Component
     #[On('refreshCart')]
     public function loadCart()
     {
-        $this->cart = CartModel::with('cartItem.book')
-            ->where('user_id', Auth::id())
+        $this->cart = CartModel::where('user_id', Auth::id())
             ->where('status', StatusCartEnum::PENDING->value)
             ->first();
+
+        $this->cartItems = CartItemModel::with(['book', 'cart'])
+            ->whereHas('cart', function ($query) {
+                $query->where('user_id', Auth::id())
+                    ->where('status', StatusCartEnum::PENDING->value);
+            })
+            ->where('status', StatusCartItemEnum::BOOKED->value)
+            ->get();
     }
 
     public function checkout()
@@ -46,12 +59,7 @@ class Cart extends Component
             return;
         }
 
-        $this->cart = CartModel::with('cartItem.book')
-            ->where('user_id', $user->id)
-            ->where('status', StatusCartEnum::PENDING->value)
-            ->first();
-
-        if (! $this->cart || $this->cart->cartItem->isEmpty()) {
+        if (! $this->cart || $this->cartItems->isEmpty()) {
             $this->errorNotification('Error', 'Keranjang kosong atau tidak ditemukan.');
 
             return;
@@ -61,25 +69,30 @@ class Cart extends Component
             'status' => StatusCartEnum::CHECK_OUT->value,
         ]);
 
-        foreach ($this->cart->cartItem as $item) {
+        foreach ($this->cartItems as $item) {
+            $item->status = StatusCartItemEnum::APPROVED->value;
+            $item->save();
+
             LoanModel::create([
                 'user_id' => $user->id,
                 'book_id' => $item->book_id,
                 'loan_date' => now(),
                 'due_date' => now()->addDays(7),
-                'status' => StatusLoanBookEnum::BORROWED->value,
+                'loan_status' => StatusLoanBookEnum::PENDING->value,
+                'confirmation_status' => ConfirmationStatusLoanEnum::PENDING->value,
+                'timeline_status' => TimelineStatusEnum::PENDING->value,
             ]);
         }
 
         $this->dispatch('refreshCart');
-        $this->successNotification('Success', 'Berhasil melakukan checkout.');
         $this->redirect(route('book.index'));
+        $this->successNotification('Success', 'Berhasil melakukan checkout.');
     }
 
     public function render()
     {
         return view('livewire.app.cart.cart', [
-            'data' => $this->cart,
+            'cartItems' => $this->cartItems,
         ]);
     }
 }

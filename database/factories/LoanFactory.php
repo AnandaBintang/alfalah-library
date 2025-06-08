@@ -7,32 +7,30 @@ use App\Models\Book;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
- */
 class LoanFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $loanDate = $this->faker->dateTimeBetween('-1 month', 'now');
         $dueDate = (clone $loanDate)->modify('+14 days');
 
-        $isReturned = $this->faker->boolean();
+        $status = $this->faker->randomElement([
+            StatusLoanBookEnum::BORROWED,
+            StatusLoanBookEnum::RETURNED,
+        ]);
+
+        $returnDate = null;
+        if ($status === StatusLoanBookEnum::RETURNED) {
+            $returnDate = $this->faker->dateTimeBetween($loanDate, 'now')->format('Y-m-d');
+        }
 
         return [
-            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'book_id' => Book::inRandomOrder()->first()?->id ?? Book::factory(),
+            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory()->create()->id,
+            'book_id' => Book::inRandomOrder()->first()?->id ?? Book::factory()->create()->id,
             'loan_date' => $loanDate->format('Y-m-d'),
             'due_date' => $dueDate->format('Y-m-d'),
-            'return_date' => $isReturned ? $this->faker->dateTimeBetween($loanDate, $dueDate)->format('Y-m-d') : null,
-            'status' => $isReturned
-              ? StatusLoanBookEnum::APPROVED->value
-              : ($dueDate < now() ? StatusLoanBookEnum::OVERDUE->value : StatusLoanBookEnum::APPROVED->value),
+            'return_date' => $returnDate,
+            'loan_status' => $status->value,
         ];
     }
 }

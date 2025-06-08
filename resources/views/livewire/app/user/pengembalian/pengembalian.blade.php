@@ -1,4 +1,4 @@
-<div class="mx-auto mb-12 w-10/12">
+<div class="mx-auto mb-12 w-10/12" wire:poll.visible>
   <div class="bg-white border border-gray-200 rounded-lg shadow p-4">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Riwayat Pengembalian Buku</h2>
 
@@ -20,12 +20,12 @@
             <td class="px-6 py-4">{{ $data->loan_date?->format('d M Y') ?? '-' }}</td>
             <td class="px-6 py-4">{{ $data->return_date?->format('d M Y') ?? '-' }}</td>
             <td class="px-6 py-4">
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-teal-100 text-teal-800">
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-teal-500 text-white font-bold">
                 Sudah Dikembalikan
               </span>
             </td>
             <td class="px-6 py-4 text-right">
-              <a href="{{ route('user.pengembalian.detail', ['id' => $data->id]) }}"
+              <a href="{{ route('pengembalian.detail', ['id' => $data->id]) }}"
                  class="text-blue-600 hover:text-blue-800 font-medium">
                 Lihat Detail
               </a>

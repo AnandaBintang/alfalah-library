@@ -1,9 +1,9 @@
 <div class="mx-auto mb-19 w-10/12">
   <h1 class="text-2xl font-bold mb-6">Keranjang Buku</h1>
 
-  @if($data && $data->cartItem->count() > 0)
+  @if($cartItems && $cartItems->count() > 0)
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @foreach($data->cartItem as $item)
+      @foreach($cartItems as $item)
         @livewire('app.cart.cart-item', ['cartItem' => $item], key($item->id))
       @endforeach
     </div>
