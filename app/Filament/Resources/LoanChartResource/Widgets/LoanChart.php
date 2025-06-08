@@ -33,7 +33,7 @@ class LoanChart extends ApexChartWidget
                 start: Carbon::parse($this->filterFormData['date_start']),
                 end: Carbon::parse($this->filterFormData['date_end']),
             )
-            ->perDay()
+            ->perMonth()
             ->count();
 
         return [
