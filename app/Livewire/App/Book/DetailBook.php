@@ -6,6 +6,7 @@ use App\Models\Book as ModelsBook;
 use App\Models\Cart as ModelCart;
 use App\Trait\NotificationsAndDialog;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -22,8 +23,18 @@ class DetailBook extends Component
     public function mount($id)
     {
         $this->id = $id;
+        $this->loadBook();
+    }
 
-        $this->book = ModelsBook::with('categories', 'publisher')->find($id);
+    #[On('refreshDetailBook')]
+    public function refreshDetailBook()
+    {
+        $this->loadBook();
+    }
+
+    protected function loadBook()
+    {
+        $this->book = ModelsBook::with('categories', 'publisher')->find($this->id);
 
         if (! $this->book) {
             abort(404);
@@ -40,9 +51,8 @@ class DetailBook extends Component
             return;
         }
 
-        $cart = ModelCart::create([
-            'user_id' => auth()->id(),
-        ]);
+        // Ambil atau buat keranjang user ini
+        $cart = ModelCart::create(['user_id' => auth()->id()]);
 
         $isBookExistInCart = $cart->cartItem()->where('book_id', $bookId)->first();
 
@@ -51,11 +61,12 @@ class DetailBook extends Component
         } else {
             $cart->cartItem()->create([
                 'book_id' => $book->id,
+                'quantity' => 1,
             ]);
         }
 
         $book->decrement('stock');
-
+        $this->dispatch('refreshDetailBook');
         $this->successNotification('Success!', 'Buku berhasil ditambahkan ke keranjang.');
     }
 
