@@ -34,7 +34,7 @@ Route::post('/logout', function () {
   return redirect()->route('login');
 })->name('logout');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:admin,siswa,petugas'])->group(function () {
 
   // Profile
   Route::get('/profile', Profile::class)->name('profile.index');;
