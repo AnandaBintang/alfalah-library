@@ -16,7 +16,8 @@ class DendaDetail extends Component
 
     public function mount($id)
     {
-        $this->data = Fine::where('user_id', Auth::id())->where('id', $id)->first();
+        $this->data = Fine::where('user_id', Auth::id())
+            ->where('id', $id)->first();
     }
 
     public function render()
