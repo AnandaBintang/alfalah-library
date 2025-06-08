@@ -13,7 +13,7 @@ class Donasi extends Component
 {
     public $data;
 
-    public function mount()
+    public function loadData()
     {
         $user = Auth::user();
         $this->data = $user->donations()->get();
@@ -21,6 +21,8 @@ class Donasi extends Component
 
     public function render()
     {
+        $this->loadData();
+
         return view('livewire.app.user.donasi.donasi', [
             'datas' => $this->data,
         ]);
