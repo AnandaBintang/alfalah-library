@@ -3,6 +3,7 @@
 namespace App\Livewire\App\User\Pengembalian;
 
 use App\Enum\StatusLoanBookEnum;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -13,7 +14,7 @@ class Pengembalian extends Component
 {
     public $data;
 
-    public function mount()
+    public function loadData()
     {
         $user = Auth::user();
         $this->data = $user->loans()->where('status', StatusLoanBookEnum::RETURNED->value)->get();
@@ -21,6 +22,8 @@ class Pengembalian extends Component
 
     public function render()
     {
+        $this->loadData();
+
         return view('livewire.app.user.pengembalian.pengembalian', [
             'datas' => $this->data,
         ]);
