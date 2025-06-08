@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enum\RoleEnum;
 use App\Filament\Resources\DonationResource\Widgets\DonationChart;
 use App\Filament\Resources\LoanChartResource\Widgets\LoanChart;
 use App\Filament\Resources\ReturnedResource\Widgets\ReturnedChart;
@@ -22,11 +23,17 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return Auth::check() && Auth::user()->hasRole(RoleEnum::ADMIN->value);
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -55,6 +62,7 @@ class AdminPanelProvider extends PanelProvider
                 DonationChart::make(),
                 VisitChart::make(),
             ])
+            ->sidebarCollapsibleOnDesktop()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
