@@ -7,6 +7,8 @@ use App\Livewire\App\User\Denda\DendaDetail;
 use App\Livewire\App\User\Donasi\CreateDonasi;
 use App\Livewire\App\User\Donasi\Donasi;
 use App\Livewire\App\User\Donasi\DonasiDetail;
+use App\Livewire\App\User\Extension\PerpanjangPeminjaman;
+use App\Livewire\App\User\Extension\PerpanjangPeminjamanDetail;
 use App\Livewire\App\User\Peminjaman\Peminjaman;
 use App\Livewire\App\User\Peminjaman\PeminjamanDetail;
 use App\Livewire\App\User\Pengembalian\Pengembalian;
@@ -44,15 +46,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengembalian/{id}', PengembalianDetail::class)->name('pengembalian.detail');
 
     // Riwayat peminjaman
-    Route::get('peminjaman', Peminjaman::class)->name('peminjaman.index');
-    Route::get('peminjaman/{id}', PeminjamanDetail::class)->name('peminjaman.detail');
+    Route::get('/peminjaman', Peminjaman::class)->name('peminjaman.index');
+    Route::get('/peminjaman/{id}', PeminjamanDetail::class)->name('peminjaman.detail');
 
     // Riwayat donasi
+    Route::get('/donasi/store', CreateDonasi::class)->name('donasi.store');
     Route::get('/donasi', Donasi::class)->name('donasi.index');
     Route::get('/donasi/{id}', DonasiDetail::class)->name('donasi.detail');
-    Route::post('/donasi/new', CreateDonasi::class)->name('donasi.new');
 
     // Riwayat denda
     Route::get('/denda', Denda::class)->name('denda.index');
     Route::get('/denda/{id}', DendaDetail::class)->name('denda.detail');
+
+    // Riwayat extenion pinjaman
+    Route::get('/perpanjang-peminjaman', PerpanjangPeminjaman::class)->name('perpanjang-peminjaman.index');
+    Route::get('/perpanjang-peminjaman/{id}', PerpanjangPeminjamanDetail::class)->name('perpanjang-peminjaman.detail');
 });
