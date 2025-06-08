@@ -5,8 +5,10 @@ namespace App\Filament\Resources\DonationResource\Widgets;
 use App\Models\Donation;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Support\Str;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class DonationChart extends ApexChartWidget
@@ -27,13 +29,19 @@ class DonationChart extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-        $data = Trend::model(Donation::class)
-            ->between(
-                start: Carbon::parse($this->filterFormData['date_start']),
-                end: Carbon::parse($this->filterFormData['date_end']),
-            )
-            ->perDay()
-            ->count();
+      $interval = $this->filterFormData['interval'] ?? 'month';
+      $start = $this->filterFormData['date_start'] ?? now()->subMonth()->startOfDay();
+      $end = $this->filterFormData['date_end'] ?? now()->endOfDay();
+
+      $start = Carbon::parse($start)->startOfDay();
+      $end = Carbon::parse($end)->endOfDay();
+
+      $method = Str::camel('per_' . $interval);
+
+      $data = Trend::model(Donation::class)
+        ->between(start: $start, end: $end)
+        ->{$method}()
+        ->count();
 
         return [
             'chart' => [
@@ -71,6 +79,14 @@ class DonationChart extends ApexChartWidget
     protected function getFormSchema(): array
     {
         return [
+          Select::make('interval')
+            ->label('Tampilan Data')
+            ->default('month')
+            ->options([
+              'day' => 'Harian',
+              'week' => 'Mingguan',
+              'month' => 'Bulanan',
+            ]),
             DatePicker::make('date_start')
                 ->default(now()->subMonth()),
             DatePicker::make('date_end')
