@@ -13,7 +13,7 @@ class Denda extends Component
 {
     public $fines;
 
-    public function mount()
+    public function loadData()
     {
         $user = Auth::user();
 
@@ -24,6 +24,8 @@ class Denda extends Component
 
     public function render()
     {
+        $this->loadData();
+
         return view('livewire.app.user.denda.denda', [
             'fines' => $this->fines,
         ]);
