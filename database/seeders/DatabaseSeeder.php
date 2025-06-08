@@ -19,13 +19,13 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             PublisherSeeder::class,
             BookSeeder::class,
-            LoanSeeder::class,
-            LoanExtensionSeeder::class,
-            FineSeeder::class,
-            BookLoanStatsSeeder::class,
-            DonationSeeder::class,
+            //            LoanSeeder::class,
+            //            LoanExtensionSeeder::class,
+            //            FineSeeder::class,
+            //            BookLoanStatsSeeder::class,
+            //            DonationSeeder::class,
             CategorySeeder::class,
-            VisitLogSeeder::class,
+            //            VisitLogSeeder::class,
         ]);
     }
 }
