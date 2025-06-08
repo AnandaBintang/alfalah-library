@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enum\RoleEnum;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ class EnsureUserHasAdminRole
             return redirect()->route('filament.admin.auth.login');
         }
 
-        if (! Auth::user()->hasRole('admin')) {
+        if (! Auth::user()->hasRole(RoleEnum::ADMIN->value) && ! Auth::user()->hasRole(RoleEnum::PETUGAS->value)) {
             Auth::logout();
 
             return redirect()->route('filament.admin.auth.login')->withErrors([
