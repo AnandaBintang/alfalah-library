@@ -2,7 +2,6 @@
 
 namespace App\Livewire\App\User\Peminjaman;
 
-use App\Enum\StatusLoanBookEnum;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -14,14 +13,16 @@ class Peminjaman extends Component
 {
     public $data;
 
-    public function mount($id)
+    public function loadData()
     {
         $user = Auth::user();
-        $this->data = $user->loans()->where('status', StatusLoanBookEnum::BORROWED->value)->get();
+        $this->data = $user->loans()->get();
     }
 
     public function render()
     {
+        $this->loadData();
+
         return view('livewire.app.user.peminjaman.peminjaman', [
             'datas' => $this->data,
         ]);
