@@ -16,10 +16,7 @@ class LoanFactory extends Factory
 
         $status = $this->faker->randomElement([
             StatusLoanBookEnum::BORROWED,
-            StatusLoanBookEnum::APPROVED,
             StatusLoanBookEnum::RETURNED,
-            StatusLoanBookEnum::OVERDUE,
-            StatusLoanBookEnum::REJECTED,
         ]);
 
         $returnDate = null;
@@ -33,7 +30,7 @@ class LoanFactory extends Factory
             'loan_date' => $loanDate->format('Y-m-d'),
             'due_date' => $dueDate->format('Y-m-d'),
             'return_date' => $returnDate,
-            'status' => $status->value,
+            'loan_status' => $status->value,
         ];
     }
 }
