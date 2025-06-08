@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Enum\RoleEnum;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,8 @@ class Register extends Component
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
             ]);
+            $user->assignRole(RoleEnum::SISWA->value);
+
             Auth::login($user);
 
             return redirect()->intended('/');
