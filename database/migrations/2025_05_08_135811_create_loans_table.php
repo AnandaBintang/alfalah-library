@@ -2,6 +2,7 @@
 
 use App\Enum\ConfirmationStatusLoanEnum;
 use App\Enum\StatusLoanBookEnum;
+use App\Enum\TimelineStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,17 +21,20 @@ return new class extends Migration
             $table->date('loan_date');
             $table->date('due_date');
             $table->date('return_date')->nullable();
-            $table->enum('status', [
+            $table->enum('timeline_status', [
+                TimelineStatusEnum::OVERDUE->value,
+                TimelineStatusEnum::ONTIME->value,
+                TimelineStatusEnum::PENDING->value,
+            ])->default(TimelineStatusEnum::PENDING->value);
+            $table->enum('loan_status', [
                 StatusLoanBookEnum::BORROWED->value,
                 StatusLoanBookEnum::RETURNED->value,
-                StatusLoanBookEnum::REJECTED->value,
-                StatusLoanBookEnum::APPROVED->value,
-                StatusLoanBookEnum::OVERDUE->value,
-            ])->default(StatusLoanBookEnum::BORROWED->value);
+                StatusLoanBookEnum::PENDING->value,
+            ])->default(StatusLoanBookEnum::PENDING->value);
             $table->enum('confirmation_status', [
                 ConfirmationStatusLoanEnum::PENDING->value,
-                ConfirmationStatusLoanEnum::APPROVED->value,
                 ConfirmationStatusLoanEnum::REJECTED->value,
+                ConfirmationStatusLoanEnum::APPROVED->value,
             ])->default(ConfirmationStatusLoanEnum::PENDING->value);
             $table->timestamps();
             $table->softDeletes();
