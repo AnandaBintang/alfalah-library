@@ -30,17 +30,17 @@ class ReturnedChart extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-      $interval = $this->filterFormData['interval'] ?? 'day';
+        $interval = $this->filterFormData['interval'] ?? 'day';
 
-      $data = Trend::query(
-        Loan::where('loan_status', StatusLoanBookEnum::RETURNED->value)
-      )
-        ->between(
-          start: Carbon::parse($this->filterFormData['date_start']),
-          end: Carbon::parse($this->filterFormData['date_end']),
+        $data = Trend::query(
+            Loan::where('status', StatusLoanBookEnum::RETURNED->value)
         )
-        ->{Str::camel('per_' . $interval)}()
-        ->count();
+            ->between(
+                start: Carbon::parse($this->filterFormData['date_start']),
+                end: Carbon::parse($this->filterFormData['date_end']),
+            )
+            ->{Str::camel('per_'.$interval)}()
+            ->count();
 
         return [
             'chart' => [
@@ -78,14 +78,14 @@ class ReturnedChart extends ApexChartWidget
     protected function getFormSchema(): array
     {
         return [
-          Select::make('interval')
-            ->label('Tampilan Data')
-            ->default('day')
-            ->options([
-              'day' => 'Harian',
-              'week' => 'Mingguan',
-              'month' => 'Bulanan',
-            ]),
+            Select::make('interval')
+                ->label('Tampilan Data')
+                ->default('day')
+                ->options([
+                    'day' => 'Harian',
+                    'week' => 'Mingguan',
+                    'month' => 'Bulanan',
+                ]),
             DatePicker::make('date_start')
                 ->default(now()->subMonth()),
             DatePicker::make('date_end')

@@ -30,7 +30,7 @@ class LoanFactory extends Factory
             'loan_date' => $loanDate->format('Y-m-d'),
             'due_date' => $dueDate->format('Y-m-d'),
             'return_date' => $returnDate,
-            'loan_status' => $status->value,
+            'status' => $status->value,
         ];
     }
 }
