@@ -26,7 +26,7 @@
     </div>
 
     <div class="mt-6">
-      <a href="{{ route('user.pengembalian') }}"
+      <a href="{{ route('pengembalian.index') }}"
          class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium rounded-lg">
         ← Kembali ke Riwayat Pengembalian
       </a>
