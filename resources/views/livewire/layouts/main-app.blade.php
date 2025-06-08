@@ -91,7 +91,7 @@
             <div class="p-1 space-y-0.5">
               <a
                 class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100"
-                href="#">
+                href="{{ route('profile.index') }}">
                 Profile
               </a>
               <form method="post" action="{{ route('logout') }}" class="group">
@@ -115,9 +115,9 @@
            class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
            aria-labelledby="hs-navbar-alignment-collapse">
         <div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
-          <a
-            class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "
-            href="#">Dashboard</a>
+{{--          <a--}}
+{{--            class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "--}}
+{{--            href="#">Dashboard</a>--}}
           <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
              href="{{ route('book.index') }}" wire:navigate>Buku</a>
           <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
