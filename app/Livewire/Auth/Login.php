@@ -34,7 +34,7 @@ class Login extends Component
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             session()->regenerate();
 
-            return redirect()->intended('/');
+            return redirect()->route('book.index');
         } else {
             $this->errorNotification('Error', 'Account atau password salah.');
         }
