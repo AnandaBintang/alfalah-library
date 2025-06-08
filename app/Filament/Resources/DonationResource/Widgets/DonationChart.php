@@ -19,7 +19,7 @@ class DonationChart extends ApexChartWidget
     /**
      * Widget Title
      */
-    protected static ?string $heading = 'DonationChart';
+    protected static ?string $heading = 'Aktivitas Donasi ';
 
     /**
      * Chart options (series, labels, types, size, animations...)
