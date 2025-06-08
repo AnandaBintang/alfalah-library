@@ -44,7 +44,7 @@ class Register extends Component
 
             Auth::login($user);
 
-            return redirect()->intended('/');
+            return redirect()->route('book.index');
         } catch (\Exception $e) {
             $this->error = 'Terjadi kesalahan saat registrasi.';
         }
