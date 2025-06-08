@@ -11,6 +11,8 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class VisitChart extends ApexChartWidget
 {
+    protected static ?string $pollingInterval = '10s';
+
     /**
      * Chart Id
      */
