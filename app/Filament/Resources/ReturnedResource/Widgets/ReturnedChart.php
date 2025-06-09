@@ -33,7 +33,7 @@ class ReturnedChart extends ApexChartWidget
         $interval = $this->filterFormData['interval'] ?? 'day';
 
         $data = Trend::query(
-            Loan::where('status', StatusLoanBookEnum::RETURNED->value)
+            Loan::where('loan_status', StatusLoanBookEnum::RETURNED->value)
         )
             ->between(
                 start: Carbon::parse($this->filterFormData['date_start']),
