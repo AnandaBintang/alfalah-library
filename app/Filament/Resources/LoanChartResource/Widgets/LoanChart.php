@@ -37,7 +37,7 @@ class LoanChart extends ApexChartWidget
         $method = Str::camel('per_'.$interval);
 
         $data = Trend::query(
-            Loan::where('status', StatusLoanBookEnum::BORROWED->value)
+            Loan::where('loan_status', StatusLoanBookEnum::BORROWED->value)
         )
             ->between(
                 start: Carbon::parse($start)->startOfDay(),
