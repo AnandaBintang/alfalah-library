@@ -42,6 +42,8 @@ Route::middleware(['auth', 'role:admin|siswa|petugas'])->group(function () {
   // Book
   Route::get('/book', \App\Livewire\App\Book\Book::class)->name('book.index');
   Route::get('/book/{id}', DetailBook::class)->name('book.detail');
+  Route::get('/book/print-card/{id}', [App\Filament\Resources\BookResource::class, 'printCard'])->name('book.print-card');
+  Route::get('/book/print-cards-bulk/{ids}', [App\Filament\Resources\BookResource::class, 'printCardsBulk'])->name('book.print-cards-bulk');
 
   // Cart
   Route::get('/cart', Cart::class)->name('cart.index');
