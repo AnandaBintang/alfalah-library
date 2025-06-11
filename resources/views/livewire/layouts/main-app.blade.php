@@ -15,9 +15,6 @@
   <livewire:components.announcement-banner/>
   {{--  Running Information--}}
 
-  {{--WireUI Notif--}}
-  <x-notifications z-index="z-50"/>
-  {{--WireUI Notif--}}
 
   {{--    Navbar --}}
   <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
