@@ -25,7 +25,7 @@
       <div class="flex space-x-1.5">
         <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
-           href="{{ route('book.index') }}" wire:navigate>SMP
+           href="{{ route('book.index') }}" >SMP
           Alfalah Assalam</a>
       </div>
 
@@ -66,12 +66,16 @@
         </button>
 
         {{--        Cart--}}
-        <a href="{{ route('cart.index') }}"
-           class="hidden md:block px-3 py-2 flex border border-gray-200 justify-center items-center  text-sm font-medium rounded-lg bg-gray-100 hover:bg-gray-300 text-white focus:outline-hidden disabled:opacity-50 cursor-pointer">
+        <a  href="{{ route('cart.index') }}"
+           class="relative px-3 py-2 flex justify-center items-center border border-gray-200 text-sm font-medium rounded-lg bg-gray-100 hover:bg-gray-300 text-white focus:outline-hidden disabled:opacity-50 cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <path fill="#000"
                   d="M17 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2M1 2v2h2l3.6 7.59l-1.36 2.45c-.15.28-.24.61-.24.96a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25q0-.075.03-.12L8.1 13h7.45c.75 0 1.41-.42 1.75-1.03l3.58-6.47c.07-.16.12-.33.12-.5a1 1 0 0 0-1-1H5.21l-.94-2M7 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2"/>
           </svg>
+{{--          <span--}}
+{{--            class="absolute top-0 right-0 z-10 inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium transform -translate-y-1/2 translate-x-1/2 bg-red-500 text-white">--}}
+{{--            {{ $cart }}--}}
+{{--          </span>--}}
         </a>
 
         <div class=" hs-dropdown relative inline-flex">
@@ -115,11 +119,11 @@
            class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
            aria-labelledby="hs-navbar-alignment-collapse">
         <div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
-{{--          <a--}}
-{{--            class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "--}}
-{{--            href="#">Dashboard</a>--}}
+          {{--          <a--}}
+          {{--            class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "--}}
+          {{--            href="#">Dashboard</a>--}}
           <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
-             href="{{ route('book.index') }}" wire:navigate>Buku</a>
+             href="{{ route('book.index') }}" >Buku</a>
           <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
              href="{{ route('donasi.store') }}">Donasi</a>
 
@@ -186,13 +190,18 @@
             </button>
 
             {{--            Cart--}}
-            <a wire:navigate href="{{ route('cart.index') }}"
-               class="px-3 py-2 flex border border-gray-200 justify-center items-center  text-sm font-medium rounded-lg bg-gray-100 hover:bg-gray-300 text-white focus:outline-hidden disabled:opacity-50 cursor-pointer">
+            <a  href="{{ route('cart.index') }}"
+               class="relative px-3 py-2 flex justify-center items-center border border-gray-200 text-sm font-medium rounded-lg bg-gray-100 hover:bg-gray-300 text-white focus:outline-hidden disabled:opacity-50 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path fill="#000"
                       d="M17 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2M1 2v2h2l3.6 7.59l-1.36 2.45c-.15.28-.24.61-.24.96a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25q0-.075.03-.12L8.1 13h7.45c.75 0 1.41-.42 1.75-1.03l3.58-6.47c.07-.16.12-.33.12-.5a1 1 0 0 0-1-1H5.21l-.94-2M7 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2"/>
               </svg>
+              <span
+                class="absolute top-0 right-0 z-10 inline-flex items-center py-0.5 px-1.5 rounded-full text-xs font-medium transform -translate-y-1/2 translate-x-1/2 bg-red-500 text-white">
+                99+
+              </span>
             </a>
+
 
             {{--Button--}}
 
