@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enum\RoleEnum;
 use App\Filament\Resources\DendaResource\Pages;
 use App\Models\Fine;
 use Filament\Forms;
@@ -97,4 +98,9 @@ class DendaResource extends Resource
             'edit' => Pages\EditDenda::route('/{record}/edit'),
         ];
     }
+
+  public static function canViewAny(): bool
+  {
+    return Auth::check() && (Auth::user()->hasRole(RoleEnum::ADMIN->value) || Auth::user()->hasRole(RoleEnum::PETUGAS->value));
+  }
 }
