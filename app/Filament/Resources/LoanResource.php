@@ -22,7 +22,7 @@ class LoanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
-    protected static ?string $navigationLabel = 'Loan';
+    protected static ?string $navigationLabel = 'Peminjaman Buku';
 
     protected static ?string $pollingInterval = '5s';
 
