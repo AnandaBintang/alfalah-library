@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enum\ApprovalStatusEnum;
+use App\Enum\RoleEnum;
 use App\Filament\Resources\DonationResource\Pages;
 use App\Models\Donation;
 use Filament\Forms\Form;
@@ -102,4 +103,9 @@ class DonationResource extends Resource
             'edit' => Pages\EditDonation::route('/{record}/edit'),
         ];
     }
+
+  public static function canViewAny(): bool
+  {
+    return Auth::check() && (Auth::user()->hasRole(RoleEnum::ADMIN->value) || Auth::user()->hasRole(RoleEnum::PETUGAS->value));
+  }
 }
