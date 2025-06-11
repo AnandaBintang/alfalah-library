@@ -3,9 +3,9 @@
 namespace App\Livewire\App\User\Donasi;
 
 use App\Models\Donation;
-use App\Trait\NotificationsAndDialog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -15,7 +15,7 @@ use Livewire\WithFileUploads;
 #[Layout('livewire.layouts.main-app')]
 class CreateDonasi extends Component
 {
-  use NotificationsAndDialog, WithFileUploads;
+  use WithFileUploads;
 
   public $item_name;
 
@@ -56,7 +56,12 @@ class CreateDonasi extends Component
 
     $this->reset();
     $this->redirect(route('donasi.index'));
-    $this->successNotification('Donasi Dikirim', 'Permintaan donasi berhasil dikirim dan menunggu persetujuan.');
+    LivewireAlert::title('Donasi Baru!')
+      ->text('Permintaan donasi berhasil dikirim dan menunggu persetujuan.')
+      ->position('center')
+      ->timer(5500)
+      ->success()
+      ->show();
   }
 
   public function render()
