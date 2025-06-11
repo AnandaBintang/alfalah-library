@@ -10,8 +10,8 @@
 @source "../../node_modules/preline/dist/*.js";
 
 /* Wireui*/
-@import '../../vendor/wireui/wireui/ts/global.css';
-@source '../../vendor/wireui/wireui';
+/*@import '../../vendor/wireui/wireui/ts/global.css';*/
+/*@source '../../vendor/wireui/wireui';*/
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
