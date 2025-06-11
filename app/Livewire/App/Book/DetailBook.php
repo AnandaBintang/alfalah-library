@@ -6,17 +6,17 @@ use App\Enum\StatusCartEnum;
 use App\Enum\StatusCartItemEnum;
 use App\Models\Book as ModelsBook;
 use App\Models\Cart as ModelCart;
-use App\Trait\NotificationsAndDialog;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 #[Layout('livewire.layouts.main-app')]
 #[Title('Detail Buku')]
 class DetailBook extends Component
 {
-  use NotificationsAndDialog;
+
 
   public $id;
 
@@ -48,12 +48,22 @@ class DetailBook extends Component
     $book = ModelsBook::find($bookId);
 
     if (!$book) {
-      $this->errorNotification('Error!', 'Buku tidak ditemukan.');
+      LivewireAlert::title('Error!')
+        ->text('Buku tidak ditemukann.')
+        ->position('center')
+        ->timer(5500)
+        ->error()
+        ->show();
       return;
     }
 
     if ($book->stock < 1) {
-      $this->errorNotification('Error!', 'Buku out of stock.');
+      LivewireAlert::title('Error!')
+        ->text('Buku out of stock.')
+        ->position('center')
+        ->timer(5500)
+        ->error()
+        ->show();
       return;
     }
 
@@ -64,7 +74,12 @@ class DetailBook extends Component
 
     // Periksa apakah keranjang sudah memiliki item
     if ($cart->cartItem()->count() > 0) {
-      $this->errorNotification('Error!', 'Anda hanya dapat menambahkan satu buku ke keranjang.');
+      LivewireAlert::title('Error!')
+        ->text('Anda hanya dapat menambahkan satu buku ke keranjang.')
+        ->position('center')
+        ->timer(5500)
+        ->error()
+        ->show();
       return;
     }
 
@@ -80,7 +95,12 @@ class DetailBook extends Component
 
     // Refresh detail buku dan tampilkan notifikasi sukses
     $this->dispatch('refreshDetailBook');
-    $this->successNotification('Success!', 'Buku berhasil ditambahkan ke keranjang.');
+    LivewireAlert::title('Success!')
+      ->text('Buku berhasil ditambahkan ke keranjang.')
+      ->position('center')
+      ->timer(5500)
+      ->success()
+      ->show();
   }
 
   public function render()
