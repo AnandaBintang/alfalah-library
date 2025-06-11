@@ -4,6 +4,7 @@ namespace App\Livewire\App\Book;
 
 use App\Models\Book as ModelBook;
 use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -37,6 +38,7 @@ class Book extends Component
 
     public function render()
     {
+      DB::enableQueryLog();
         $query = ModelBook::query()->with('categories');
 
         if ($this->search) {
@@ -49,6 +51,8 @@ class Book extends Component
 
         $datas = $query->paginate(15);
         $categories = Category::orderBy('name')->get();
+        $queries = DB::getQueryLog();
+//        dd($queries);
 
         return view('livewire.app.book.book', compact('datas', 'categories'));
     }
