@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enum\RoleEnum;
 use App\Filament\Resources\BookResource\Pages;
 use App\Models\Book;
 use Filament\Forms;
@@ -111,4 +112,10 @@ class BookResource extends Resource
       'edit' => Pages\EditBook::route('/{record}/edit'),
     ];
   }
+
+  public static function canViewAny(): bool
+  {
+    return Auth::check() && (Auth::user()->hasRole(RoleEnum::ADMIN->value) || Auth::user()->hasRole(RoleEnum::PETUGAS->value));
+  }
+
 }
