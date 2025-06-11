@@ -15,52 +15,52 @@ use Livewire\WithFileUploads;
 #[Layout('livewire.layouts.main-app')]
 class CreateDonasi extends Component
 {
-    use NotificationsAndDialog, WithFileUploads;
+  use NotificationsAndDialog, WithFileUploads;
 
-    public $item_name;
+  public $item_name;
 
-    public $description;
+  public $description;
 
-    public $quantity = 1;
+  public $quantity = 1;
 
-    public $image;
+  public $image;
 
-    protected $rules = [
-        'item_name' => 'required|string|max:255',
-        'description' => 'nullable|string|max:1000',
-        'quantity' => 'required|integer|min:1',
-        'image' => 'nullable|image|max:5120',
-    ];
+  protected $rules = [
+    'item_name' => 'required|string|max:255',
+    'description' => 'nullable|string|max:1000',
+    'quantity' => 'required|integer|min:1',
+    'image' => 'nullable|image|max:5120',
+  ];
 
-    public function submit()
-    {
-        $this->validate();
+  public function submit()
+  {
+    $this->validate();
 
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->storeAs(
-                'donations',
-                Str::random(30).'.'.$this->image->getClientOriginalExtension(),
-                'public'
-            );
-        }
-
-        Donation::create([
-            'user_id' => Auth::id(),
-            'item_name' => $this->item_name,
-            'description' => $this->description,
-            'quantity' => $this->quantity,
-            'donation_date' => now(),
-            'image' => $imagePath,
-        ]);
-
-        $this->reset();
-        $this->redirect(route('donations.index'));
-        $this->successNotification('Donasi Dikirim', 'Permintaan donasi berhasil dikirim dan menunggu persetujuan.');
+    $imagePath = null;
+    if ($this->image) {
+      $imagePath = $this->image->storeAs(
+        'donations',
+        Str::random(30) . '.' . $this->image->getClientOriginalExtension(),
+        'public'
+      );
     }
 
-    public function render()
-    {
-        return view('livewire.app.user.donasi.create-donasi');
-    }
+    Donation::create([
+      'user_id' => Auth::id(),
+      'item_name' => $this->item_name,
+      'description' => $this->description,
+      'quantity' => $this->quantity,
+      'donation_date' => now(),
+      'image' => $imagePath,
+    ]);
+
+    $this->reset();
+    $this->redirect(route('donasi.index'));
+    $this->successNotification('Donasi Dikirim', 'Permintaan donasi berhasil dikirim dan menunggu persetujuan.');
+  }
+
+  public function render()
+  {
+    return view('livewire.app.user.donasi.create-donasi');
+  }
 }
