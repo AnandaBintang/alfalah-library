@@ -98,10 +98,7 @@ class UserResource extends Resource
     ];
   }
 
-  public static function canViewAny(): bool
-  {
-    return Auth::check() && Auth::user()->hasRole(RoleEnum::ADMIN->value);
-  }
+
 
   public static function getPages(): array
   {
@@ -110,5 +107,10 @@ class UserResource extends Resource
       'create' => Pages\CreateUser::route('/create'),
       'edit' => Pages\EditUser::route('/{record}/edit'),
     ];
+  }
+
+  public static function canViewAny(): bool
+  {
+    return Auth::check() && Auth::user()->hasRole(RoleEnum::ADMIN->value);
   }
 }
