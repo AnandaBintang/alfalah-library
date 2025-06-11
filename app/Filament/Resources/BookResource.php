@@ -88,7 +88,7 @@ class BookResource extends Resource
         Tables\Actions\EditAction::make(),
       ])
       ->bulkActions([
-        ExportBulkAction::make(),
+        ExportBulkAction::make()->label('Export to Excel'),
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make(),
         ]),
