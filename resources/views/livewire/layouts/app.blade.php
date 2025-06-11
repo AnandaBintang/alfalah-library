@@ -20,9 +20,6 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-  {{--WireUI Notif--}}
-  <x-notifications position="top-end"/>
-  {{--WireUI Notif--}}
 
   {{--    Navbar --}}
   <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
@@ -71,6 +68,7 @@
            class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
            aria-labelledby="hs-navbar-alignment-collapse">
         <div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
+          @if(!\Illuminate\Support\Facades\Auth::check())
           <a
             class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "
             href="#fitur">Fitur</a>
@@ -80,6 +78,58 @@
           <a
             class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
             href="#lokasi">Lokasi</a>
+          @endif
+
+          @if(\Illuminate\Support\Facades\Auth::check())
+              <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+                 href="{{ route('book.index') }}" >Buku</a>
+              <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+                 href="{{ route('donasi.store') }}">Donasi</a>
+
+              <div class="hs-dropdown relative inline-flex">
+                <button id="hs-dropdown-default" type="button"
+                        class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-white dark:border-gray-200 dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:bg-gray-100"
+                        aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                  Riwayat
+                  <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                       viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                       stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
+
+                <div
+                  class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-white dark:border-gray-200 dark:divide-gray-200 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
+                  role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-default">
+                  <div class="p-1 space-y-0.5">
+                    <a
+                      class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:bg-gray-100"
+                      href="{{ route("donasi.index") }}">
+                      Riwayat Donasi
+                    </a>
+                    <a
+                      class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:bg-gray-100"
+                      href="{{ route("peminjaman.index") }}">
+                      Riwayat Pinjaman
+                    </a>
+                    <a
+                      class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:bg-gray-100"
+                      href="{{ route("perpanjang-peminjaman.index") }}">
+                      Riwayat Perpanjang Pinjaman
+                    </a>
+                    <a
+                      class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:bg-gray-100"
+                      href="{{ route('pengembalian.index') }}">
+                      Riwayat Pengembalian
+                    </a>
+                    <a
+                      class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:bg-gray-100"
+                      href="{{ route("denda.index") }}">
+                      Riwayat Denda
+                    </a>
+                  </div>
+                </div>
+          @endif
 
           @if(!\Illuminate\Support\Facades\Auth::check())
           <div class=" md:hidden lg:hidden grid grid-cols-2 gap-3">
