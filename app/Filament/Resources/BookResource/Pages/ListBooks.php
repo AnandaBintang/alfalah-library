@@ -34,7 +34,8 @@ class ListBooks extends ListRecords
           fileName: 'sample-books.xlsx',
           sampleButtonLabel: 'Download Sample',
         )
-        ->color("primary"),
+        ->color("primary")
+      ->label("Import to Excel"),
       Actions\CreateAction::make(),
     ];
   }

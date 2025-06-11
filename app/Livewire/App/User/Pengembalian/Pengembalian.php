@@ -17,7 +17,7 @@ class Pengembalian extends Component
     public function loadData()
     {
         $user = Auth::user();
-        $this->data = $user->loans()->where('status', StatusLoanBookEnum::RETURNED->value)->get();
+        $this->data = $user->loans()->where('loan_status', StatusLoanBookEnum::RETURNED->value)->get();
     }
 
     public function render()
