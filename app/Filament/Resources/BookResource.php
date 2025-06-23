@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use Filament\Notifications\Notification;
 
 class BookResource extends Resource
 {
@@ -86,9 +87,35 @@ class BookResource extends Resource
       ])
       ->actions([
         Tables\Actions\EditAction::make(),
+        Tables\Actions\Action::make('print_card')
+          ->label('Print Kartu')
+          ->icon('heroicon-o-printer')
+          ->color('success')
+          ->url(fn(Book $record): string => route('book.print-card', $record))
+          ->openUrlInNewTab(),
       ])
       ->bulkActions([
         ExportBulkAction::make()->label('Export to Excel'),
+        Tables\Actions\BulkAction::make('print_cards')
+          ->label('Print Kartu Buku')
+          ->icon('heroicon-o-printer')
+          ->color('success')
+          ->action(function ($records) {
+            if ($records->count() > 30) {
+              Notification::make()
+                ->title('Terlalu Banyak Buku')
+                ->body('Maksimal 30 buku yang dapat dicetak sekaligus.')
+                ->danger()
+                ->send();
+              return;
+            }
+
+            $bookIds = $records->pluck('id')->toArray();
+            $url = route('book.print-cards-bulk', ['ids' => implode(',', $bookIds)]);
+
+            return redirect($url);
+          })
+          ->deselectRecordsAfterCompletion(),
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make(),
         ]),
@@ -109,6 +136,84 @@ class BookResource extends Resource
       'index' => Pages\ListBooks::route('/'),
       'create' => Pages\CreateBook::route('/create'),
       'edit' => Pages\EditBook::route('/{record}/edit'),
+    ];
+  }
+
+  public function generateCard($id)
+  {
+    $book = Book::findOrFail($id);
+    $rackLocationParts = explode('.', $book->rack_location);
+    $rackCode = isset($rackLocationParts[0]) ? str_pad($rackLocationParts[0], 3, '0', STR_PAD_LEFT) : '';
+    $publisherCode = '';
+
+    if ($book->publisher && !empty($book->publisher->name)) {
+      $publisherParts = explode(' ', $book->publisher->name);
+      $publisherCode = strtoupper(substr(implode('', array_map(function ($part) {
+        return substr($part, 0, 1);
+      }, $publisherParts)), 0, 3));
+    }
+
+    $titleCode = strtoupper(substr($book->title, 0, 1));
+    $bookNumber = str_pad($book->id, 3, '0', STR_PAD_LEFT);
+    $libraryCardCode = "{$rackCode}.{$bookNumber} {$publisherCode} {$titleCode}";
+
+    return response()->json([
+      'classification_code' => $rackCode . '.' . $bookNumber,
+      'publisher_code' => $publisherCode,
+      'title_code' => $titleCode,
+      'library_card_code' => $libraryCardCode,
+      'book' => new BookResource($book)
+    ]);
+  }
+
+  public function printCard($id)
+  {
+    $book = Book::findOrFail($id);
+    $cardData = $this->generateCardData($book);
+
+    return view('book-card.print', compact('cardData'));
+  }
+
+  public function printCardsBulk($ids)
+  {
+    $bookIds = explode(',', $ids);
+
+    if (count($bookIds) > 30) {
+      return redirect()->back()->with('error', 'Maksimal 30 buku yang dapat dicetak sekaligus.');
+    }
+
+    $books = Book::whereIn('id', $bookIds)->get();
+    $cardsData = [];
+
+    foreach ($books as $book) {
+      $cardsData[] = $this->generateCardData($book);
+    }
+
+    return view('book-card.print-bulk', compact('cardsData'));
+  }
+
+  private function generateCardData($book)
+  {
+    $rackLocationParts = explode('.', $book->rack_location);
+    $rackCode = isset($rackLocationParts[0]) ? str_pad($rackLocationParts[0], 3, '0', STR_PAD_LEFT) : '';
+    $publisherCode = '';
+
+    if ($book->publisher && !empty($book->publisher->name)) {
+      $publisherParts = explode(' ', $book->publisher->name);
+      $publisherCode = strtoupper(substr(implode('', array_map(function ($part) {
+        return substr($part, 0, 1);
+      }, $publisherParts)), 0, 3));
+    }
+
+    $titleCode = strtoupper(substr($book->title, 0, 1));
+    $bookNumber = str_pad($book->id, 3, '0', STR_PAD_LEFT);
+    $classificationCode = $rackCode . '.' . $bookNumber;
+
+    return [
+      'classification_code' => $classificationCode,
+      'title_code' => $titleCode,
+      'publisher_code' => $publisherCode,
+      'book' => $book
     ];
   }
 }
