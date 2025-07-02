@@ -4,7 +4,7 @@
       <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
            viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round"
-              d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8zm0 0V6m0 12v-2" />
+              d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8zm0 0V6m0 12v-2"/>
       </svg>
       Form Pengajuan Donasi
     </h2>
@@ -12,10 +12,12 @@
     <form wire:submit.prevent="submit" class="space-y-6">
       <!-- Nama Item -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Nama Item <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-medium text-gray-700">Nama Item
+          <span class="text-red-500">*</span>
+        </label>
         <input wire:model.defer="item_name" type="text"
                class="mt-1 block w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-               placeholder="Contoh: Buku Fisika SMA" />
+               placeholder="Contoh: Buku Fisika SMA"/>
         @error('item_name') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
       </div>
 
@@ -33,10 +35,12 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Jumlah -->
         <div>
-          <label class="block text-sm font-medium text-gray-700">Jumlah <span class="text-red-500">*</span></label>
+          <label class="block text-sm font-medium text-gray-700">Jumlah
+            <span class="text-red-500">*</span>
+          </label>
           <input wire:model.defer="quantity" type="number" min="1"
                  class="mt-1 block w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                 placeholder="1 atau lebih" />
+                 placeholder="1 atau lebih"/>
           @error('quantity') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
         </div>
 
@@ -44,19 +48,23 @@
         <div>
           <label class="block text-sm font-medium text-gray-700">Gambar (opsional)</label>
           <input wire:model="image" type="file" accept="image/*"
-                 class="mt-1 block w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                 class="mt-1 block w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"/>
           @error('image') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+          {{--          @if ($image)--}}
+          {{--            <img src="{{ $image->temporaryUrl() }}">--}}
+          {{--          @endif--}}
         </div>
       </div>
 
       <!-- Tombol Submit -->
       <div class="text-right">
-        <button type="submit"
+        <button @disabled(empty($image))
+                type="submit"
                 class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M5 13l4 4L19 7" />
+                  d="M5 13l4 4L19 7"/>
           </svg>
           Ajukan Donasi
         </button>
