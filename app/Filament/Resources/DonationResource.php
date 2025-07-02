@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class DonationResource extends Resource
 {
@@ -29,6 +30,7 @@ class DonationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+          ->poll('10s')
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('user.name')
