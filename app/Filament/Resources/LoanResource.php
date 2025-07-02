@@ -6,6 +6,7 @@ use App\Enum\ConfirmationStatusLoanEnum;
 use App\Enum\RoleEnum;
 use App\Enum\TimelineStatusEnum;
 use App\Filament\Resources\LoanResource\Pages;
+use App\Filament\Resources\LoanResource\Widgets\LoanLegend;
 use App\Models\Fine;
 use App\Models\Loan;
 use Filament\Forms\Components\DatePicker;
@@ -16,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LoanResource extends Resource
 {
@@ -25,7 +27,6 @@ class LoanResource extends Resource
 
   protected static ?string $navigationLabel = 'Peminjaman Buku';
 
-  protected static ?string $pollingInterval = '5s';
 
   public static function form(Form $form): Form
   {
@@ -89,6 +90,7 @@ class LoanResource extends Resource
   public static function table(Table $table): Table
   {
     return $table
+      ->poll('10s')
       ->columns([
         Tables\Columns\TextColumn::make('user.name')
           ->label('Nama Peminjam')
@@ -110,7 +112,14 @@ class LoanResource extends Resource
           ->dateTime('d M Y'),
 
         Tables\Columns\TextColumn::make('timeline_status')
-          ->label('Status pengembalian'),
+          ->label('Status Pengembalian')
+          ->formatStateUsing(fn($state) => strtoupper($state))
+          ->badge()
+          ->colors([
+            'info' => 'PENDING',
+            'success' => 'ONTIME',
+            'danger' => 'OVERDUE',
+          ]),
 
         Tables\Columns\SelectColumn::make('loan_status')
           ->label('Status Buku')
@@ -120,66 +129,112 @@ class LoanResource extends Resource
               ->toArray()
           )
           ->afterStateUpdated(function ($state, $record) {
-            if ($state === \App\Enum\StatusLoanBookEnum::RETURNED->value) {
+            DB::beginTransaction();
+            try {
               $now = now();
 
-              // Update return_date
-              $record->update([
-                'return_date' => $now,
-                'timeline_status' => TimelineStatusEnum::ONTIME->value,
-              ]);
-
-              // Tambah stok buku
-              if ($record->book) {
-                $record->book->increment('stock');
-              }
-
-              // Update semua cart item dengan cart_id milik user & book_id ini
-              if ($record->user && $record->user->cart) {
-                \App\Models\CartItem::where('cart_id', $record->user->cart->id)
-                  ->where('book_id', $record->book_id)
-                  ->update([
-                    'status' => ConfirmationStatusLoanEnum::APPROVED->value,
-                  ]);
-              }
-
-              // Hitung denda jika terlambat
-              if ($record->due_date < $now) {
+              if ($state === \App\Enum\StatusLoanBookEnum::BORROWED->value) {
+                // Update timeline status to BORROWED
                 $record->update([
-                  'timeline_status' => TimelineStatusEnum::OVERDUE->value,
+                  'loan_status' => \App\Enum\StatusLoanBookEnum::BORROWED->value,
+                  'timeline_status' => \App\Enum\TimelineStatusEnum::PENDING->value,
+                  'return_date' => null
                 ]);
 
-                $minutesLate = $record->due_date->diffInMinutes($now);
-                $daysLateDecimal = $minutesLate / 1440;
-
-                $daysLate = $daysLateDecimal > 0.5 ? ceil($daysLateDecimal) : floor($daysLateDecimal);
-
-                $finePerDay = 1000;
-                $totalFine = floor(($daysLate * $finePerDay) / 100) * 100;
-
-                Fine::create([
-                  'loan_id' => $record->id,
-                  'user_id' => $record->user_id,
-                  'description' => 'Terlambat mengembalikan buku ' . $record->book->title . ' selama ' . $daysLate . ' hari.',
-                  'amount' => $totalFine,
-                ]);
+                if ($record->book) {
+                  $record->book->decrement('stock');
+                }
 
                 Notification::make()
-                  ->title('Terlambat mengembalikan buku ' . $record->book->title)
+                  ->title('Buku berhasil dipinjam.')
                   ->success()
-                  ->body('Terlambat mengembalikan buku ' . $record->book->title . ' selama ' . $daysLate . ' hari dengan denda ' . $totalFine)
+                  ->body('Status peminjaman sekarang adalah BORROWED.')
                   ->seconds(15)
                   ->send();
+              } elseif ($state === \App\Enum\StatusLoanBookEnum::PENDING->value) {
+                // Update timeline status to PENDING
+                $record->update([
+                  'loan_status' => \App\Enum\StatusLoanBookEnum::PENDING->value,
+                  'timeline_status' => \App\Enum\TimelineStatusEnum::PENDING->value,
+                  'return_date' => null
+                ]);
+
+                if ($record->book) {
+                  $record->book->decrement('stock');
+                }
+
+                Notification::make()
+                  ->title('Pinjaman menunggu persetujuan.')
+                  ->warning()
+                  ->body('Status peminjaman sekarang adalah PENDING.')
+                  ->seconds(15)
+                  ->send();
+              } elseif ($state === \App\Enum\StatusLoanBookEnum::RETURNED->value) {
+                // Update return_date and timeline status
+                $record->update([
+                  'return_date' => $now,
+                  'loan_status' => \App\Enum\StatusLoanBookEnum::RETURNED->value,
+                  'timeline_status' => $record->due_date < $now
+                    ? \App\Enum\TimelineStatusEnum::OVERDUE->value
+                    : \App\Enum\TimelineStatusEnum::ONTIME->value,
+                ]);
+
+                // Increment stock if book exists
+                if ($record->book) {
+                  $record->book->increment('stock');
+                }
+
+                // Update all cart items related to this book and user's carts
+                if ($record->user && $record->user->cart) {
+                  foreach ($record->user->cart as $cart) {
+                    \App\Models\CartItem::where('cart_id', $cart->id)
+                      ->where('book_id', $record->book_id)
+                      ->update([
+                        'status' => \App\Enum\StatusCartItemEnum::APPROVED->value,
+                      ]);
+                  }
+                }
+
+                // Handle overdue cases
+                if ($record->due_date < $now) {
+                  $minutesLate = $record->due_date->diffInMinutes($now);
+                  $daysLateDecimal = $minutesLate / 1440;
+                  $daysLate = $daysLateDecimal > 0.5 ? ceil($daysLateDecimal) : floor($daysLateDecimal);
+
+                  $finePerDay = 1000;
+                  $totalFine = floor(($daysLate * $finePerDay) / 100) * 100;
+
+                  Fine::create([
+                    'loan_id' => $record->id,
+                    'user_id' => $record->user_id,
+                    'description' => 'Terlambat mengembalikan buku ' . $record->book->title . ' selama ' . $daysLate . ' hari.',
+                    'amount' => $totalFine,
+                  ]);
+
+                  Notification::make()
+                    ->title('Terlambat mengembalikan buku ' . $record->book->title)
+                    ->danger()
+                    ->body('Terlambat mengembalikan buku selama ' . $daysLate . ' hari dengan denda sebesar ' . $totalFine . '.')
+                    ->seconds(15)
+                    ->send();
+                } else {
+                  Notification::make()
+                    ->title('Buku berhasil dikembalikan.')
+                    ->success()
+                    ->body('Tidak ada denda untuk pengembalian ini.')
+                    ->seconds(15)
+                    ->send();
+                }
               }
 
-              Notification::make()
-                ->title('Buku berhasil dikembalikan.')
-                ->success()
-                ->body('User tidak mempunyai denda')
-                ->seconds(15)
-                ->send();
+              DB::commit();
+            } catch (\Exception $e) {
+              DB::rollBack();
+              throw $e;
             }
+
           }),
+
 
         Tables\Columns\SelectColumn::make('confirmation_status')
           ->label('Status Admin')
@@ -210,7 +265,7 @@ class LoanResource extends Resource
               ->toArray()
           )
           ->default(null)
-          ->attribute('status')
+          ->attribute('loan_status')
           ->searchable(),
       ])
       ->actions([
@@ -220,6 +275,21 @@ class LoanResource extends Resource
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make(),
+          Tables\Actions\BulkAction::make('approve_pending')
+            ->label('Setujui yang Pending')
+            ->action(function ($records) {
+              foreach ($records as $record) {
+                if ($record->confirmation_status == \App\Enum\ConfirmationStatusLoanEnum::PENDING->value) {
+                  $record->update([
+                    'confirmation_status' => \App\Enum\ConfirmationStatusLoanEnum::APPROVED->value,
+                    'loan_status' => \App\Enum\StatusLoanBookEnum::BORROWED->value,
+                  ]);
+                }
+              }
+            })
+            ->requiresConfirmation()
+            ->color('success')
+            ->icon('heroicon-o-check'),
         ]),
       ]);
   }
@@ -249,4 +319,6 @@ class LoanResource extends Resource
   {
     return Auth::check() && (Auth::user()->hasRole(RoleEnum::ADMIN->value) || Auth::user()->hasRole(RoleEnum::PETUGAS->value));
   }
+
+
 }
