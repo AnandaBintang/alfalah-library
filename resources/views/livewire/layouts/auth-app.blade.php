@@ -12,9 +12,6 @@
 </head>
 <body>
 
-  {{--WireUI Notif--}}
-  <x-notifications position="top-end"/>
-  {{--WireUI Notif--}}
 
   {{--    Main Content --}}
   {{ $slot }}

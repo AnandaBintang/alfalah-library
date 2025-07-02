@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enum\RoleEnum;
 use App\Filament\Resources\BookResource\Pages;
 use App\Models\Book;
 use Filament\Forms;
@@ -9,7 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use Illuminate\Support\Facades\Auth;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Filament\Notifications\Notification;
@@ -70,15 +71,19 @@ class BookResource extends Resource
           ->label('Judul Buku')
           ->searchable(),
         Tables\Columns\TextColumn::make('author')
-          ->label('Penulis'),
+          ->label('Penulis')
+        ->searchable()
+        ->sortable(),
         Tables\Columns\TextColumn::make('publication_year')
-          ->label('Tahun Terbit'),
+          ->label('Tahun Terbit')
+        ->sortable(),
         Tables\Columns\TextColumn::make('publisher.name')
           ->label('Penerbit'),
         Tables\Columns\TextColumn::make('isbn')
           ->label('ISBN'),
         Tables\Columns\TextColumn::make('stock')
-          ->label('Stok'),
+          ->label('Stok')
+        ->sortable(),
         Tables\Columns\TextColumn::make('rack_location')
           ->label('Lokasi Rak'),
       ])
@@ -138,6 +143,7 @@ class BookResource extends Resource
       'edit' => Pages\EditBook::route('/{record}/edit'),
     ];
   }
+
 
   public function generateCard($id)
   {
@@ -215,5 +221,10 @@ class BookResource extends Resource
       'publisher_code' => $publisherCode,
       'book' => $book
     ];
+  }
+
+  public static function canViewAny(): bool
+  {
+    return Auth::check() && (Auth::user()->hasRole(RoleEnum::ADMIN->value) || Auth::user()->hasRole(RoleEnum::PETUGAS->value));
   }
 }

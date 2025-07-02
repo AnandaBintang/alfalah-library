@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enum\ApprovalStatusEnum;
+use App\Enum\RoleEnum;
 use App\Filament\Resources\DonationResource\Pages;
 use App\Models\Donation;
 use Filament\Forms\Form;
@@ -10,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class DonationResource extends Resource
 {
@@ -28,6 +30,7 @@ class DonationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+          ->poll('10s')
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('user.name')
@@ -102,4 +105,9 @@ class DonationResource extends Resource
             'edit' => Pages\EditDonation::route('/{record}/edit'),
         ];
     }
+
+  public static function canViewAny(): bool
+  {
+    return Auth::check() && (Auth::user()->hasRole(RoleEnum::ADMIN->value) || Auth::user()->hasRole(RoleEnum::PETUGAS->value));
+  }
 }

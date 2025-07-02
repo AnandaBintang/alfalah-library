@@ -8,12 +8,13 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListLoanExtensions extends ListRecords
 {
-    protected static string $resource = LoanExtensionResource::class;
+  protected static string $resource = LoanExtensionResource::class;
+  protected static ?string $title = 'Daftar Perpanjangan Peminjaman';
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      Actions\CreateAction::make(),
+    ];
+  }
 }

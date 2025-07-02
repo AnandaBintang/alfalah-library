@@ -29,11 +29,6 @@ use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return Auth::check() && Auth::user()->hasRole(RoleEnum::ADMIN->value);
-    }
-
     public function panel(Panel $panel): Panel
     {
         return $panel

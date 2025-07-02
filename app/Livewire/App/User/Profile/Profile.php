@@ -2,11 +2,11 @@
 
 namespace App\Livewire\App\User\Profile;
 
-use App\Trait\NotificationsAndDialog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -17,7 +17,7 @@ use Livewire\WithFileUploads;
 #[Layout('livewire.layouts.main-app')]
 class Profile extends Component
 {
-  use WithFileUploads, NotificationsAndDialog;
+  use WithFileUploads;
 
   public $name, $nis, $nisn, $class, $address, $phone;
   public $library_card_image, $old_image;
@@ -39,45 +39,48 @@ class Profile extends Component
 
   public function updateProfile()
   {
-    try {
-      $this->validate([
-        'name' => 'required|string|max:255',
-        'nis' => 'nullable|string|max:20',
-        'nisn' => 'nullable|string|max:20',
-        'class' => 'nullable|string|max:50',
-        'address' => 'nullable|string',
-        'phone' => 'nullable|string|max:20',
-        'library_card_image' => 'nullable|image|max:5120',
-      ]);
 
-      $user = auth()->user();
-      $user->update(['name' => $this->name]);
+    $this->validate([
+      'name' => 'required|string|max:255',
+      'nis' => 'nullable|string|max:20',
+      'nisn' => 'nullable|string|max:20',
+      'class' => 'nullable|string|max:50',
+      'address' => 'nullable|string',
+      'phone' => 'nullable|string|max:20',
+      'library_card_image' => 'nullable|image|max:5120',
+    ]);
 
-      $profileData = [
-        'nis' => $this->nis,
-        'nisn' => $this->nisn,
-        'class' => $this->class,
-        'address' => $this->address,
-        'phone' => $this->phone,
-      ];
+    $user = auth()->user();
+    $user->update(['name' => $this->name]);
 
-      if ($this->library_card_image) {
-        $filename = Str::random(30) . '.' . $this->library_card_image->getClientOriginalExtension();
-        $path = $this->library_card_image->storeAs('library_card_student', $filename, 'public');
-        $profileData['library_card_image_path'] = $path;
+    $profileData = [
+      'nis' => $this->nis,
+      'nisn' => $this->nisn,
+      'class' => $this->class,
+      'address' => $this->address,
+      'phone' => $this->phone,
+    ];
 
-        if ($this->old_image) {
-          Storage::disk('public')->delete($this->old_image);
-        }
+    if ($this->library_card_image) {
+      $filename = Str::random(30) . '.' . $this->library_card_image->getClientOriginalExtension();
+      $path = $this->library_card_image->storeAs('library_card_student', $filename, 'public');
+      $profileData['library_card_image_path'] = $path;
 
-        $this->old_image = $path;
+      if ($this->old_image) {
+        Storage::disk('public')->delete($this->old_image);
       }
-      $user->profile()->updateOrCreate(['user_id' => $user->id], $profileData);
 
-      $this->successNotification('Success', 'Profil berhasil diperbarui.');
-    } catch (\Throwable $th) {
-      $this->errorNotification( $th->getLine(), $th->getMessage());
+      $this->old_image = $path;
     }
+    $user->profile()->updateOrCreate(['user_id' => $user->id], $profileData);
+
+    LivewireAlert::title('Success!')
+      ->text('Profil berhasil diperbarui.')
+      ->position('center')
+      ->timer(5500)
+      ->success()
+      ->show();
+
   }
 
   public function updatePassword()
@@ -99,7 +102,12 @@ class Profile extends Component
     Auth::logout();
 
     $this->redirect(route('login'));
-    $this->successNotification('Success', 'Password berhasil diubah.');
+    LivewireAlert::title('Success!')
+      ->text('Password berhasil diubah.')
+      ->position('center')
+      ->timer(5500)
+      ->success()
+      ->show();
   }
 
   public function render()
