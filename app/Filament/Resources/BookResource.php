@@ -71,15 +71,19 @@ class BookResource extends Resource
           ->label('Judul Buku')
           ->searchable(),
         Tables\Columns\TextColumn::make('author')
-          ->label('Penulis'),
+          ->label('Penulis')
+        ->searchable()
+        ->sortable(),
         Tables\Columns\TextColumn::make('publication_year')
-          ->label('Tahun Terbit'),
+          ->label('Tahun Terbit')
+        ->sortable(),
         Tables\Columns\TextColumn::make('publisher.name')
           ->label('Penerbit'),
         Tables\Columns\TextColumn::make('isbn')
           ->label('ISBN'),
         Tables\Columns\TextColumn::make('stock')
-          ->label('Stok'),
+          ->label('Stok')
+        ->sortable(),
         Tables\Columns\TextColumn::make('rack_location')
           ->label('Lokasi Rak'),
       ])
@@ -219,7 +223,7 @@ class BookResource extends Resource
     ];
   }
 
-    public static function canViewAny(): bool
+  public static function canViewAny(): bool
   {
     return Auth::check() && (Auth::user()->hasRole(RoleEnum::ADMIN->value) || Auth::user()->hasRole(RoleEnum::PETUGAS->value));
   }
