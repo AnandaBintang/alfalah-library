@@ -8,6 +8,7 @@ use App\Models\Loan as LoanModel;
 use App\Models\LoanExtension;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -29,77 +30,91 @@ class PeminjamanDetail extends Component
 
   public function requestExtension()
   {
-    if (!$this->data) {
-      LivewireAlert::title('Error!')
-        ->text('Data peminjaman tidak ditemukan.')
-        ->position('center')
-        ->timer(5500)
-        ->error()
-        ->show();
-      return;
-    }
+    try {
+      DB::beginTransaction();
+      if (!$this->data) {
+        LivewireAlert::title('Error!')
+          ->text('Data peminjaman tidak ditemukan.')
+          ->position('top-end')
+          ->timer(5500)
+          ->toast()
+          ->error()
+          ->show();
+        DB::rollBack();
+        return;
+      }
 
-    if ($this->data->loan_status !== StatusLoanBookEnum::BORROWED->value) {
-      LivewireAlert::title('Error!')
-        ->text('Peminjaman tidak bisa diperpanjang.')
-        ->position('center')
-        ->timer(5500)
-        ->error()
-        ->show();
-      return;
-    }
+      if ($this->data->loan_status !== StatusLoanBookEnum::BORROWED->value) {
+        LivewireAlert::title('Error!')
+          ->text('Peminjaman tidak bisa diperpanjang.')
+          ->position('top-end')
+          ->timer(5500)
+          ->toast()
+          ->error()
+          ->show();
+        DB::rollBack();
 
-    $existingExtension = LoanExtension::where('loan_id', $this->data->id)->first();
-    if ($existingExtension) {
-      LivewireAlert::title('Error!')
-        ->text('Sudah pernah melakukan perpanjangan.')
-        ->position('center')
-        ->timer(5500)
-        ->error()
-        ->show();
-      return;
-    }
+        return;
+      }
 
-    $now = Carbon::now();
-    $dueDate = Carbon::parse($this->data->due_date);
+      $existingExtension = LoanExtension::where('loan_id', $this->data->id)->first();
+      if ($existingExtension) {
+        LivewireAlert::title('Error!')
+          ->text('Sudah pernah melakukan perpanjangan.')
+          ->position('top-end')
+          ->timer(5500)
+          ->error()
+          ->toast()
+          ->show();
 
-    if ($now->gt($dueDate)) {
-      $daysLate = $now->diffInDays($dueDate);
-      $fineAmount = round($daysLate * 1000);
+        DB::rollBack();
+        return;
+      }
 
-      Fine::create([
-        'user_id' => Auth::id(),
+      $now = Carbon::now();
+      $dueDate = Carbon::parse($this->data->due_date);
+
+      if ($now->gt($dueDate)) {
+        $daysLate = $now->diffInDays($dueDate);
+        $fineAmount = round($daysLate * 1000);
+
+        Fine::create([
+          'user_id' => Auth::id(),
+          'loan_id' => $this->data->id,
+          'amount' => $fineAmount,
+          'status' => 'unpaid',
+          'description' => "Denda keterlambatan $daysLate hari",
+        ]);
+
+
+        LivewireAlert::title('Perhatian!')
+          ->text('Anda terlambat $daysLate hari, denda sebesar Rp $fineAmount telah ditambahkan.')
+          ->position('top-end')
+          ->timer(5500)
+          ->info()
+          ->show();
+      }
+
+      LoanExtension::create([
         'loan_id' => $this->data->id,
-        'amount' => $fineAmount,
-        'status' => 'unpaid',
-        'description' => "Denda keterlambatan $daysLate hari",
+        'previous_due_date' => $this->data->due_date,
+        'new_due_date' => $dueDate->addDays(7),
+        'status' => 'pending',
       ]);
 
-
-      LivewireAlert::title('Perhatian!')
-        ->text('Anda terlambat $daysLate hari, denda sebesar Rp $fineAmount telah ditambahkan.')
+      LivewireAlert::title('Berhasil!')
+        ->text('Permintaan perpanjangan telah dikirim.')
         ->position('center')
         ->timer(5500)
-        ->info()
+        ->success()
         ->show();
+
+      $this->data = $this->data->fresh();
+      DB::commit();
+    } catch (\Throwable $e) {
+      DB::rollBack();
     }
 
-    LoanExtension::create([
-      'loan_id' => $this->data->id,
-      'previous_due_date' => $this->data->due_date,
-      'new_due_date' => $dueDate->addDays(7),
-      'status' => 'pending',
-    ]);
-
-    $this->successNotification('Berhasil', 'Permintaan perpanjangan telah dikirim.');
-    LivewireAlert::title('Berhasil!')
-      ->text('Permintaan perpanjangan telah dikirim.')
-      ->position('center')
-      ->timer(5500)
-      ->success()
-      ->show();
-
-    $this->data = $this->data->fresh();
   }
 
   public function render()
