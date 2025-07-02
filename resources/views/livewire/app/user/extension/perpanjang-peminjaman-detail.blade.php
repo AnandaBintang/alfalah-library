@@ -24,22 +24,31 @@
           <p>{{ \Carbon\Carbon::parse($data->new_due_date)->format('d M Y') }}</p>
         </div>
 
+        @php
+          $status = $data->status;
+
+          if ($status === 'approved') {
+              $statusConfig = ['color' => 'bg-teal-500 text-white', 'label' => 'approved'];
+          } else {
+              $statusConfig = match ($status) {
+                  'pending'  => ['color' => 'bg-yellow-600 text-white', 'label' => 'pending'],
+                  'rejected' => ['color' => 'bg-red-600 text-white', 'label' => 'rejected'],
+                  default    => ['color' => 'bg-gray-600 text-white', 'label' => $status],
+              };
+          }
+        @endphp
+
         <div>
-          <span class="font-medium">Status:</span>
+          <span class="font-medium block mb-1">Status:</span>
           <p>
-            @if ($data->status === 'approved')
-              <span class="text-green-600 font-semibold">Disetujui</span>
-            @elseif ($data->status === 'pending')
-              <span class="text-yellow-600 font-semibold">Menunggu</span>
-            @elseif ($data->status === 'rejected')
-              <span class="text-red-600 font-semibold">Ditolak</span>
-            @else
-              <span class="text-gray-600 font-semibold">{{ ucfirst($data->status) }}</span>
-            @endif
+            <span class="font-semibold px-2 py-1 rounded-lg {{ $statusConfig['color'] }}">
+              {{ $statusConfig['label'] }}
+            </span>
           </p>
         </div>
 
-        @if ($data->description)
+
+      @if ($data->description)
           <div class="md:col-span-2">
             <span class="font-medium">Keterangan:</span>
             <p>{{ $data->description }}</p>
