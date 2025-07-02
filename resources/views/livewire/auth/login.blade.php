@@ -27,7 +27,8 @@
       </div>
 
       <button type="submit"
-              class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+              class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition relative flex justify-center items-center">
+        <span wire:loading class="animate-spin inline-block size-4 border-3 border-current border-t-transparent rounded-full mr-1"></span>
         Masuk
       </button>
     </form>
