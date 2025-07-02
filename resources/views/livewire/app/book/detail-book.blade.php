@@ -1,16 +1,16 @@
 <div class="mx-auto mb-19 w-10/12">
   <div class="flex flex-col md:flex-row gap-6">
     {{-- Cover Buku --}}
-    <div class="flex-shrink-0 w-full md:w-1/3">
+    <div class="flex-shrink-0 w-full md:w-1/3 shadow-xl">
       <img
-        src="{{ $data->cover_image_path ? asset('storage/' . $data->cover_image_path) : asset('images/default-book.png') }}"
+        src="{{ $data->cover_image_path ? asset('storage/' . $data->cover_image_path) : asset('images/default-bok.png') }}"
         alt="{{ $data->title ?? 'No Title' }}"
         class="w-full h-auto object-cover rounded shadow"
       >
     </div>
 
     {{-- Detail Buku --}}
-    <div class="flex-1 bg-white p-6 rounded shadow">
+    <div class="flex-1 bg-white p-6 rounded shadow-xl">
       <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ $data->title ?? '-' }}</h1>
       <h2 class="text-xl text-gray-600 mb-4">{{ $data->subtitle ?? '-' }}</h2>
 
