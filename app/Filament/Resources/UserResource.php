@@ -10,12 +10,15 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class UserResource extends Resource
 {
@@ -67,6 +70,7 @@ class UserResource extends Resource
     return $table
       ->modifyQueryUsing(function (Builder $query) {
         return $query
+          ->with('profile')
           ->leftJoin('model_has_roles', function ($join) {
             $join->on('users.id', '=', 'model_has_roles.model_id')
               ->where('model_has_roles.model_type', '=', \App\Models\User::class);
@@ -87,13 +91,28 @@ class UserResource extends Resource
           ->sortable(),
       ])
       ->filters([
-        //
+        // SelectFilter::make('role_name')
+        //   ->label('Role')
+        //   ->options(
+        //     Role::pluck('name', 'name')->toArray()
+        //   )
+        //   ->query(function (Builder $query, $state) {
+        //     if ($state) {
+        //       $query->where('roles.name', $state);
+        //     }
+        //   }),
+      ])
+      ->headerActions([
+        ExportAction::make()
+          ->label('Export Semua User'),
       ])
       ->actions([
         Tables\Actions\EditAction::make(),
+        Tables\Actions\DeleteAction::make(),
       ])
       ->bulkActions([
-        Tables\Actions\ExportBulkAction::make(),
+        ExportBulkAction::make()
+          ->label('Export yang Dipilih'),
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make(),
         ]),
@@ -121,5 +140,20 @@ class UserResource extends Resource
   public static function canViewAny(): bool
   {
     return Auth::check() && Auth::user()->hasRole(RoleEnum::ADMIN->value);
+  }
+
+  public static function getExportColumns(): array
+  {
+    return [
+      'name' => 'Nama',
+      'email' => 'Email',
+      'role_name' => 'Role',
+      'is_active' => 'Aktif',
+      'profile.nis' => 'NIS',
+      'profile.nisn' => 'NISN',
+      'profile.class' => 'Kelas',
+      'profile.address' => 'Alamat',
+      'profile.phone' => 'No HP',
+    ];
   }
 }
