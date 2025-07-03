@@ -70,25 +70,42 @@ class UserResource extends Resource
     return $table
       ->modifyQueryUsing(function (Builder $query) {
         return $query
-          ->with('profile')
           ->leftJoin('model_has_roles', function ($join) {
             $join->on('users.id', '=', 'model_has_roles.model_id')
               ->where('model_has_roles.model_type', '=', \App\Models\User::class);
           })
           ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-          ->select('users.*', 'roles.name as role_name');
+          ->leftJoin('profiles', 'users.id', '=', 'profiles.user_id') // Tambahkan join ke profiles
+          ->select([
+            'users.*',
+            'roles.name as role_name',
+            'profiles.nis as profile_nis',
+            'profiles.nisn as profile_nisn',
+            'profiles.class as profile_class',
+            'profiles.address as profile_address',
+            'profiles.phone as profile_phone',
+          ]);
       })
       ->columns([
         Tables\Columns\TextColumn::make('name')->label('Nama')->sortable()->searchable(),
         Tables\Columns\TextColumn::make('email')->label('Email')->sortable()->searchable(),
-        Tables\Columns\TextColumn::make('role_name')
-          ->label('Role')
-          ->sortable()
-          ->searchable(),
-        Tables\Columns\IconColumn::make('is_active')
-          ->label('Aktif')
-          ->boolean()
-          ->sortable(),
+        Tables\Columns\TextColumn::make('role_name')->label('Role')->sortable()->searchable(),
+        Tables\Columns\TextColumn::make('profile_nis')
+          ->label('NIS')
+          ->getStateUsing(fn($record) => $record->profile_nis ?? '-'),
+        Tables\Columns\TextColumn::make('profile_nisn')
+          ->label('NISN')
+          ->getStateUsing(fn($record) => $record->profile_nisn ?? '-'),
+        Tables\Columns\TextColumn::make('profile_class')
+          ->label('Kelas')
+          ->getStateUsing(fn($record) => $record->profile_class ?? '-'),
+        Tables\Columns\TextColumn::make('profile_address')
+          ->label('Alamat')
+          ->getStateUsing(fn($record) => $record->profile_address ?? '-'),
+        Tables\Columns\TextColumn::make('profile_phone')
+          ->label('No HP')
+          ->getStateUsing(fn($record) => $record->profile_phone ?? '-'),
+        Tables\Columns\IconColumn::make('is_active')->label('Aktif')->boolean()->sortable(),
       ])
       ->filters([
         // SelectFilter::make('role_name')
@@ -149,11 +166,11 @@ class UserResource extends Resource
       'email' => 'Email',
       'role_name' => 'Role',
       'is_active' => 'Aktif',
-      'profile.nis' => 'NIS',
-      'profile.nisn' => 'NISN',
-      'profile.class' => 'Kelas',
-      'profile.address' => 'Alamat',
-      'profile.phone' => 'No HP',
+      'profile_nis' => 'NIS',
+      'profile_nisn' => 'NISN',
+      'profile_class' => 'Kelas',
+      'profile_address' => 'Alamat',
+      'profile_phone' => 'No HP',
     ];
   }
 }
