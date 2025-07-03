@@ -65,13 +65,22 @@ class UserResource extends Resource
   public static function table(Table $table): Table
   {
     return $table
+      ->modifyQueryUsing(function (Builder $query) {
+        return $query
+          ->leftJoin('model_has_roles', function ($join) {
+            $join->on('users.id', '=', 'model_has_roles.model_id')
+              ->where('model_has_roles.model_type', '=', \App\Models\User::class);
+          })
+          ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+          ->select('users.*', 'roles.name as role_name');
+      })
       ->columns([
         Tables\Columns\TextColumn::make('name')->label('Nama')->sortable()->searchable(),
         Tables\Columns\TextColumn::make('email')->label('Email')->sortable()->searchable(),
-        Tables\Columns\TextColumn::make('role')
+        Tables\Columns\TextColumn::make('role_name')
           ->label('Role')
-          ->getStateUsing(fn(User $record) => $record->getRoleNames()->first() ?? '-')
-          ->sortable(),
+          ->sortable()
+          ->searchable(),
         Tables\Columns\IconColumn::make('is_active')
           ->label('Aktif')
           ->boolean()
