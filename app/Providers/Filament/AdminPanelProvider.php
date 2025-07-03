@@ -7,6 +7,7 @@ use App\Filament\Resources\DonationResource\Widgets\DonationChart;
 use App\Filament\Resources\LoanChartResource\Widgets\LoanChart;
 use App\Filament\Resources\ReturnedResource\Widgets\ReturnedChart;
 use App\Filament\Resources\VisitResource\Widgets\VisitChart;
+use App\Filament\Widgets\TopVisitors;
 use App\Filament\Widgets\UserStats;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use Filament\Http\Middleware\Authenticate;
@@ -29,49 +30,50 @@ use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function panel(Panel $panel): Panel
-    {
-        return $panel
-            ->default()
-            ->id('admin')
-            ->path('admin')
-            ->login()
-            ->favicon(asset('logo/logo-alfalah.png'))
-            ->colors([
-                'primary' => Color::Amber,
-            ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->plugins([
-                FilamentApexChartsPlugin::make(),
-            ])
-            ->widgets([
-                //        Widgets\AccountWidget::class,
-                UserStats::class,
-                LoanChart::make(),
-                ReturnedChart::make(),
-                DonationChart::make(),
-                VisitChart::make(),
-            ])
-            ->sidebarCollapsibleOnDesktop()
-            ->middleware([
-                EncryptCookies::class,
-                AddQueuedCookiesToResponse::class,
-                StartSession::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
-                SubstituteBindings::class,
-                DisableBladeIconComponents::class,
-                DispatchServingFilamentEvent::class,
-            ])
-            ->authMiddleware([
-                Authenticate::class,
-                EnsureUserHasAdminRole::class,
-            ]);
-    }
+  public function panel(Panel $panel): Panel
+  {
+    return $panel
+      ->default()
+      ->id('admin')
+      ->path('admin')
+      ->login()
+      ->favicon(asset('logo/logo-alfalah.png'))
+      ->colors([
+        'primary' => Color::Amber,
+      ])
+      ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+      ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+      ->pages([
+        Pages\Dashboard::class,
+      ])
+      ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+      ->plugins([
+        FilamentApexChartsPlugin::make(),
+      ])
+      ->widgets([
+        //        Widgets\AccountWidget::class,
+        UserStats::class,
+        LoanChart::make(),
+        ReturnedChart::make(),
+        DonationChart::make(),
+        VisitChart::make(),
+        TopVisitors::class,
+      ])
+      ->sidebarCollapsibleOnDesktop()
+      ->middleware([
+        EncryptCookies::class,
+        AddQueuedCookiesToResponse::class,
+        StartSession::class,
+        AuthenticateSession::class,
+        ShareErrorsFromSession::class,
+        VerifyCsrfToken::class,
+        SubstituteBindings::class,
+        DisableBladeIconComponents::class,
+        DispatchServingFilamentEvent::class,
+      ])
+      ->authMiddleware([
+        Authenticate::class,
+        EnsureUserHasAdminRole::class,
+      ]);
+  }
 }
