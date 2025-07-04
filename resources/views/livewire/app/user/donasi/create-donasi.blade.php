@@ -58,14 +58,17 @@
 
       <!-- Tombol Submit -->
       <div class="text-right">
-        <button @disabled(empty($image))
-                type="submit"
-                class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+          <svg wire:loading.remove
+               class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
                   d="M5 13l4 4L19 7"/>
           </svg>
+          <span wire:loading
+                class="animate-spin inline-block size-4 border-3 border-current border-t-transparent rounded-full mr-1"></span>
           Ajukan Donasi
         </button>
       </div>
