@@ -125,7 +125,9 @@ class DetailBook extends Component
         ->position('center')
         ->timer(6000)
         ->success()
-        ->withConfirmButton('Next')
+        ->withCancelButton('Keranjang')
+        ->onConfirm('backToCart')
+        ->withConfirmButton('Daftar Buku')
         ->onConfirm('backToListBook')
         ->show();
 
@@ -148,6 +150,11 @@ class DetailBook extends Component
   public function backToListBook()
   {
     $this->redirectIntended(route('book.index'));
+  }
+
+  public function backToCart()
+  {
+    $this->redirectIntended(route('cart.index'));
   }
 
 
