@@ -134,10 +134,12 @@ class LoanResource extends Resource
               $now = now();
 
               if ($state === \App\Enum\StatusLoanBookEnum::BORROWED->value) {
+
                 // Update timeline status to BORROWED
                 $record->update([
                   'loan_status' => \App\Enum\StatusLoanBookEnum::BORROWED->value,
                   'timeline_status' => \App\Enum\TimelineStatusEnum::PENDING->value,
+                  'confirmation_status' => ConfirmationStatusLoanEnum::APPROVED->value,
                   'return_date' => null
                 ]);
 
@@ -156,6 +158,7 @@ class LoanResource extends Resource
                 $record->update([
                   'loan_status' => \App\Enum\StatusLoanBookEnum::PENDING->value,
                   'timeline_status' => \App\Enum\TimelineStatusEnum::PENDING->value,
+                  'confirmation_status' => ConfirmationStatusLoanEnum::PENDING->value,
                   'return_date' => null
                 ]);
 

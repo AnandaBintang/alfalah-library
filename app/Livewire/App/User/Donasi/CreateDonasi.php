@@ -4,6 +4,8 @@ namespace App\Livewire\App\User\Donasi;
 
 use App\Models\Donation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Layout;
@@ -29,20 +31,23 @@ class CreateDonasi extends Component
     'item_name' => 'required|string|max:255',
     'description' => 'nullable|string|max:1000',
     'quantity' => 'required|integer|min:1',
-    'image' => 'nullable|image|max:5120',
+    'image' => 'required|image|max:5120',
   ];
 
   public function submit()
   {
     try {
+      DB::beginTransaction();
       $this->validate();
 
       $imagePath = null;
       if ($this->image) {
-        $imagePath = $this->image->storeAs(
+        $filename = Str::random(30) . '.' . $this->image->getClientOriginalExtension();
+
+        $imagePath = Storage::disk('public')->putFileAs(
           'donations',
-          Str::random(30) . '.' . $this->image->getClientOriginalExtension(),
-          'public'
+          $this->image,
+          $filename
         );
       }
 
@@ -55,7 +60,6 @@ class CreateDonasi extends Component
         'image' => $imagePath,
       ]);
 
-      $this->reset();
       $this->redirect(route('donasi.store'));
       LivewireAlert::title('Donasi Baru!')
         ->text('Permintaan donasi berhasil dikirim dan menunggu persetujuan.')
@@ -63,8 +67,14 @@ class CreateDonasi extends Component
         ->timer(5500)
         ->success()
         ->show();
+      DB::commit();
     } catch (\Throwable $e) {
-      dd($e->getMessage());
+      DB::rollBack();
+      LivewireAlert::title('Donasi Gagal!')
+        ->error()
+        ->text($e->getMessage())
+        ->timer(2000)
+        ->show();
     }
 
   }

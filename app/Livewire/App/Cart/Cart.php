@@ -64,6 +64,17 @@ class Cart extends Component
       return;
     }
 
+    $hasBookedBook = $user->loans()->whereNull('return_date')->exists();
+    if ($hasBookedBook) {
+      LivewireAlert::title('Checkout gagal!')
+        ->text('Anda masih memiliki buku yang belum dikembalikan.')
+        ->position('center')
+        ->timer(5500)
+        ->error()
+        ->show();
+      return;
+    }
+
     if (!$this->cart || $this->cartItems->isEmpty()) {
       LivewireAlert::title('Error!')
         ->text('Keranjang kosong atau tidak ditemukan.')
