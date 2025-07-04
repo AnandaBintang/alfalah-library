@@ -4,25 +4,14 @@
     <img src="{{ asset('storage/' . $item->book->cover_image_path) }}" alt="{{ $item->book->title }}"
          class="w-16 h-20 object-cover rounded-lg shadow-sm">
     <div class="flex flex-col">
-      <h3
-        class="font-semibold text-base sm:text-lg text-gray-800">{{ \Illuminate\Support\Str::limit($item->book->title, 13) }}</h3>
+      <h3 class="font-semibold text-base sm:text-lg text-gray-800">
+        {{ \Illuminate\Support\Str::limit($item->book->title, 13) }}
+      </h3>
       @if ($item->book->subtitle)
         <p class="text-sm text-gray-500">{{ \Illuminate\Support\Str::limit($item->book->subtitle, 29) }}</p>
       @endif
+      <span class="text-sm text-gray-600 mt-1">Jumlah: {{ $item->quantity }}</span>
     </div>
-  </div>
-
-  {{-- Quantity Controls --}}
-  <div class="flex items-center justify-between sm:justify-center gap-3">
-    <button wire:click="decrement"
-            class="inline-flex items-center font-bold justify-center h-8 w-8 rounded-full border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-      –
-    </button>
-    <span class="text-base font-medium text-gray-700">{{ $item->quantity }}</span>
-    <button wire:click="increment"
-            class="inline-flex font-bold  items-center justify-center h-8 w-8 rounded-full border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-      +
-    </button>
   </div>
 
   {{-- Remove Button --}}
