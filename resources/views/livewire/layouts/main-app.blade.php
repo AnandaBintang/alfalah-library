@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="{{ asset("logo/logo-alfalah.png") }}">
+  <link rel="icon" type="image/x-icon" href="{{ asset("foto/LOGO2.png") }}">
 
   <title>{{ $title ?? 'Perpustakaan Al-Falah' }}</title>
   @vite('resources/css/app.css')
@@ -21,10 +21,9 @@
   <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
     <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <div class="flex space-x-1.5">
-        <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
+        <img src="{{ asset('foto/LOGO1.png') }}" alt="logo" style="width: 180px; height: auto;" class="hidden sm:block">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
-           href="{{ route('book.index') }}">SMP
-          Alfalah Assalam</a>
+           href="{{ route('book.index') }}" wire:navigate></a>
       </div>
 
       <div class="sm:order-3 flex items-center gap-x-2">
@@ -110,9 +109,9 @@
           {{--          <a--}}
           {{--            class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "--}}
           {{--            href="#">Dashboard</a>--}}
-          <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+          <a class="font-medium {{ request()->routeIs('book.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-gray-400' }}"
              href="{{ route('book.index') }}">Buku</a>
-          <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+          <a class="font-medium {{ request()->routeIs('donasi.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-gray-400' }}"
              href="{{ route('donasi.store') }}">Donasi</a>
 
           <div class="hs-dropdown relative inline-flex">

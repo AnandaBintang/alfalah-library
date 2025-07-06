@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="{{ asset("logo/logo-alfalah.png") }}">
+  <link rel="icon" type="image/x-icon" href="{{ asset("foto/LOGO2.png") }}">
 
   <title>{{ $title ?? 'Perpustakaan Al-Falah' }}</title>
   @vite('resources/css/app.css')
@@ -22,14 +22,12 @@
 
 
   {{--    Navbar --}}
-  <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
-    <nav
-      class="fixed top-0 left-0 right-0 z-50 bg-white w-full mx-auto px-4 py-4 flex flex-wrap items-center justify-between shadow">
+  <header class="fixed top-0 left-0 z-50 w-full flex flex-wrap sm:justify-start sm:flex-nowrap bg-white text-sm py-3 shadow-md">
+  <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <div class="flex space-x-1.5">
-        <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
+        <img src="{{ asset('foto/LOGO1.png') }}" alt="logo" style="width: 180px; height: auto;" class="hidden sm:block">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
-           href="{{ route('book.index') }}" wire:navigate>SMP
-          Alfalah Assalam</a>
+           href="{{ route('book.index') }}" wire:navigate></a>
       </div>
 
       <div class="sm:order-3 flex items-center gap-x-2">
@@ -56,11 +54,11 @@
         @if(!\Illuminate\Support\Facades\Auth::check())
           <a type="button" href="{{ route('login') }}"
              class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
-            Login
+            Masuk
           </a>
           <a type="button" href="{{ route('register') }}"
              class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
-            Sign Up
+            Daftar
           </a>
         @endif
       </div>
@@ -70,7 +68,7 @@
         <div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
           @if(!\Illuminate\Support\Facades\Auth::check())
             <a
-              class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "
+              class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
               href="#fitur">Fitur</a>
             <a
               class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
