@@ -18,8 +18,8 @@
 
 
   {{--    Navbar --}}
-  <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
-    <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
+  <header class="fixed top-10 left-0 z-50 w-full flex flex-wrap sm:justify-start sm:flex-nowrap bg-white text-sm py-3 shadow-md">
+  <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <div class="flex space-x-1.5">
         <img src="{{ asset('foto/LOGO1.png') }}" alt="logo" style="width: 180px; height: auto;" class="hidden sm:block">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
@@ -196,7 +196,7 @@
 
 
   {{--    Main Content --}}
-  <div class="flex-grow">
+  <div class="flex-grow mt-38">
     {{ $slot }}
   </div>
   {{--    Main Content --}}
