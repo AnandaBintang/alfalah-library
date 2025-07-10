@@ -42,7 +42,7 @@
 
 
   {{--  List Buku--}}
-  <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
     @foreach($datas as $data)
 
       @if($datas->count() == 0)

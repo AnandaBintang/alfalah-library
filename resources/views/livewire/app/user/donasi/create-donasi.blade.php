@@ -6,7 +6,7 @@
         <path stroke-linecap="round" stroke-linejoin="round"
               d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8zm0 0V6m0 12v-2"/>
       </svg>
-      Form Pengajuan Donasi
+      Form Pengajuan Donasi Buku
     </h2>
 
     <form wire:submit.prevent="submit" class="space-y-6">
