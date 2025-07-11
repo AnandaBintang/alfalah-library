@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enum\RoleEnum;
-use App\Filament\Resources\BookResource\Pages;
+use App\Enum\EbookTypeEnum;
 use App\Models\Book;
 use App\Models\Publisher;
 use App\Models\Writer;
@@ -11,7 +11,6 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,10 +44,10 @@ use Filament\Tables\Actions\{
   DeleteBulkAction
 };
 use App\Filament\Resources\BookResource\Pages\{
-  CreateBook,
-  EditBook,
   ListBooks,
-  ViewBook
+  CreateBook,
+  ViewBook,
+  EditBook
 };
 
 class BookResource extends Resource
@@ -131,8 +130,58 @@ class BookResource extends Resource
             Toggle::make('is_student_work')
               ->label('Karya Siswa')
               ->default(false),
+
+            Toggle::make('is_ebook')
+              ->label('Ebook')
+              ->default(false)
+              ->live()
+              ->afterStateUpdated(function ($state, Forms\Set $set) {
+                if (!$state) {
+                  $set('ebook_type', null);
+                  $set('ebook_link', null);
+                  $set('ebook_file_path', null);
+                }
+              }),
           ])
           ->columns(3),
+
+        Section::make('Pengaturan Ebook')
+          ->schema([
+            Select::make('ebook_type')
+              ->label('Tipe Ebook')
+              ->options([
+                EbookTypeEnum::LINK->value => EbookTypeEnum::LINK->label(),
+                EbookTypeEnum::PDF->value => EbookTypeEnum::PDF->label(),
+              ])
+              ->live()
+              ->afterStateUpdated(function ($state, Forms\Set $set) {
+                if ($state === EbookTypeEnum::LINK->value) {
+                  $set('ebook_file_path', null);
+                } elseif ($state === EbookTypeEnum::PDF->value) {
+                  $set('ebook_link', null);
+                }
+              }),
+
+            TextInput::make('ebook_link')
+              ->label('Link Ebook')
+              ->url()
+              ->maxLength(500)
+              ->placeholder('https://example.com/ebook.pdf')
+              ->visible(fn(Forms\Get $get) => $get('ebook_type') === EbookTypeEnum::LINK->value)
+              ->columnSpanFull(),
+
+            FileUpload::make('ebook_file_path')
+              ->label('Upload PDF Ebook')
+              ->directory('ebooks')
+              ->acceptedFileTypes(['application/pdf'])
+              ->maxSize(50 * 1024) // 50MB
+              ->downloadable()
+              ->previewable()
+              ->visible(fn(Forms\Get $get) => $get('ebook_type') === EbookTypeEnum::PDF->value)
+              ->columnSpanFull(),
+          ])
+          ->visible(fn(Forms\Get $get) => $get('is_ebook'))
+          ->columns(1),
 
         Section::make('Informasi Tambahan')
           ->schema([
@@ -227,6 +276,26 @@ class BookResource extends Resource
           ->badge()
           ->color(fn($state) => $state > 0 ? 'success' : 'danger'),
 
+        IconColumn::make('is_ebook')
+          ->label('Ebook')
+          ->boolean()
+          ->alignCenter(),
+
+        TextColumn::make('ebook_type')
+          ->label('Tipe Ebook')
+          ->badge()
+          ->color(fn($state) => match ($state) {
+            'link' => 'info',
+            'pdf' => 'success',
+            default => 'gray'
+          })
+          ->formatStateUsing(fn($state) => match ($state) {
+            'link' => 'Link',
+            'pdf' => 'PDF',
+            default => '-'
+          })
+          ->toggleable(isToggledHiddenByDefault: true),
+
         TextColumn::make('rack_location')
           ->label('Lokasi Rak')
           ->default('-')
@@ -257,10 +326,27 @@ class BookResource extends Resource
 
         TernaryFilter::make('is_student_work')
           ->label('Karya Siswa'),
+
+        TernaryFilter::make('is_ebook')
+          ->label('Ebook'),
+
+        SelectFilter::make('ebook_type')
+          ->label('Tipe Ebook')
+          ->options([
+            'link' => 'Link URL',
+            'pdf' => 'Upload PDF',
+          ]),
       ])
       ->actions([
         ViewAction::make(),
         EditAction::make(),
+        Action::make('view_ebook')
+          ->label('Buka Ebook')
+          ->icon('heroicon-o-eye')
+          ->color('success')
+          ->url(fn(Book $record): ?string => $record->ebook_url)
+          ->openUrlInNewTab()
+          ->visible(fn(Book $record): bool => $record->is_ebook_available),
         Action::make('print_card')
           ->label('Print Kartu')
           ->icon('heroicon-o-printer')

@@ -20,6 +20,10 @@ class Book extends Model
     'stock',
     'type',
     'is_student_work',
+    'is_ebook',
+    'ebook_type',
+    'ebook_link',
+    'ebook_file_path',
     'source',
     'catalog_code',
     'publication_year',
@@ -32,6 +36,7 @@ class Book extends Model
 
   protected $casts = [
     'is_student_work' => 'boolean',
+    'is_ebook' => 'boolean',
   ];
 
   public function publisher()
@@ -72,5 +77,30 @@ class Book extends Model
   public function kondisi(): HasMany
   {
     return $this->hasMany(KondisiBook::class);
+  }
+
+  public function getEbookUrlAttribute(): ?string
+  {
+    if (!$this->is_ebook) {
+      return null;
+    }
+
+    if ($this->ebook_type === 'link') {
+      return $this->ebook_link;
+    }
+
+    if ($this->ebook_type === 'pdf' && $this->ebook_file_path) {
+      return asset('storage/' . $this->ebook_file_path);
+    }
+
+    return null;
+  }
+
+  public function getIsEbookAvailableAttribute(): bool
+  {
+    return $this->is_ebook && (
+      ($this->ebook_type === 'link' && !empty($this->ebook_link)) ||
+      ($this->ebook_type === 'pdf' && !empty($this->ebook_file_path))
+    );
   }
 }
