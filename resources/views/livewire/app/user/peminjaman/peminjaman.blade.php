@@ -56,7 +56,7 @@
                     @php
                       $confirmation = $loan->confirmation_status;
                       $confirmationColor = match($confirmation) {
-                          'approved' => 'bg-teal-600 text-white',
+                          'approved' => 'bg-teal-500 text-white',
                           'pending'  => 'bg-gray-500 text-white',
                           'rejected' => 'bg-red-600 text-white',
                           default    => 'bg-gray-300 text-gray-800',

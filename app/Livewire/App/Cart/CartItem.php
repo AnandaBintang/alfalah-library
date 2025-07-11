@@ -49,7 +49,7 @@ class CartItem extends Component
       ->text('Anda yakin ingin menghapus buku ini?')
       ->position('center')
       ->timer(5500)
-      ->success()
+      ->info()
       ->onConfirm('remove')
       ->withConfirmButton('Yes')
       ->withCancelButton('No')

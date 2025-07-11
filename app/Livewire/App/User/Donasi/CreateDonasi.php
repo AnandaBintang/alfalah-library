@@ -3,6 +3,7 @@
 namespace App\Livewire\App\User\Donasi;
 
 use App\Models\Donation;
+use App\Notifications\StatusNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -39,6 +40,7 @@ class CreateDonasi extends Component
     try {
       DB::beginTransaction();
       $this->validate();
+      $user = Auth::user();
 
       $imagePath = null;
       if ($this->image) {
@@ -67,6 +69,8 @@ class CreateDonasi extends Component
         ->timer(5500)
         ->success()
         ->show();
+
+      $user->notify(new StatusNotification('success', "Donasi baru berhasil diajukan."));
       DB::commit();
     } catch (\Throwable $e) {
       DB::rollBack();
@@ -75,6 +79,9 @@ class CreateDonasi extends Component
         ->text($e->getMessage())
         ->timer(2000)
         ->show();
+      $user = Auth::user();
+      $user->notify(new StatusNotification('error', "Donasi gagal diajukan."));
+
     }
 
   }

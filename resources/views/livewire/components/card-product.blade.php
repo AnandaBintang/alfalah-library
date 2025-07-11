@@ -1,5 +1,5 @@
-<div class="flex flex-col h-[400px] bg-white border border-gray-200 shadow-2xs rounded-xl overflow-hidden">
-  <img class="w-full h-48 object-cover rounded-t-xl" src="{{ asset('storage/' . $image) }}" alt="Card Image">
+<div class="flex flex-col h-full bg-white border border-gray-200 shadow-2xs rounded-xl overflow-hidden cursor-pointer">
+  <img class="bg-fixed rounded-t-xl" src="{{ asset('storage/' . $image) }}" alt="Card Image">
   <div class="p-4 md:p-5 flex flex-col flex-1">
     <h3 class="text-lg font-bold text-gray-800">
       {{ \Illuminate\Support\Str::limit($cardTitle, 20) ?? "-" }}

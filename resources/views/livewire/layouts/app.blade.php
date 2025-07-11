@@ -53,16 +53,16 @@
 
         @if(!\Illuminate\Support\Facades\Auth::check())
           <a type="button" href="{{ route('login') }}"
-            class="hidden md:inline-flex py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+             class="hidden md:inline-flex py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
             Masuk
           </a>
 
           <a type="button" href="{{ route('register') }}"
-            class="hidden md:inline-flex py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+             class="hidden md:inline-flex py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
             Daftar
           </a>
         @endif
-        
+
       </div>
       <div id="hs-navbar-alignment"
            class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
@@ -144,6 +144,7 @@
                   </a>
                 </div>
               @endif
+            </div>
             </div>
         </div>
     </nav>

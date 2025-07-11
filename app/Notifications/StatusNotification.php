@@ -7,16 +7,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DonationNotification extends Notification
+class StatusNotification extends Notification
 {
   use Queueable;
 
   /**
    * Create a new notification instance.
    */
-  public function __construct(public $donationId, public $message)
+  public function __construct(public $status, public $message)
   {
-    //
+
   }
 
   /**
@@ -29,23 +29,24 @@ class DonationNotification extends Notification
     return ['database'];
   }
 
-  public function toDatabase(object $notifiable): array
+  public function toDatabase($notifiable): array
   {
+    if ($this->status === 'success') {
+      return [
+        'message' => $this->message,
+      ];
+    }
+
+    if ($this->status === 'pending') {
+      return [
+        'message' => $this->message,
+      ];
+    }
+
     return [
-      'donation_id' => $this->donationId,
       'message' => $this->message,
     ];
+
   }
 
-  /**
-   * Get the array representation of the notification.
-   *
-   * @return array<string, mixed>
-   */
-  public function toArray(object $notifiable): array
-  {
-    return [
-      //
-    ];
-  }
 }

@@ -64,6 +64,21 @@ class Cart extends Component
       return;
     }
 
+    $isUserHaveRequestedBooks = $user->loans()->where(function ($query) {
+      $query->where('loan_status', StatusLoanBookEnum::PENDING->value);
+      $query->where('confirmation_status', ConfirmationStatusLoanEnum::PENDING->value);
+    })->exists();
+
+    if ($isUserHaveRequestedBooks) {
+      LivewireAlert::title('Checkout gagal!')
+        ->text('Anda masih memiliki permintaan peminjaman buku!')
+        ->position('center')
+        ->timer(5500)
+        ->error()
+        ->show();
+      return;
+    }
+
     $hasBookedBook = $user->loans()->whereNull('return_date')->exists();
     if ($hasBookedBook) {
       LivewireAlert::title('Checkout gagal!')

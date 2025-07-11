@@ -62,4 +62,9 @@ class Book extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    public function kondisi(): HasMany
+    {
+      return $this->hasMany(KondisiBook::class);
+    }
 }
