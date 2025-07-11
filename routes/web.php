@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\App\User\Profile\Profile;
 use App\Http\Controllers\EbookController;
+use App\Http\Controllers\BookCardController;
 
 // Landing page
 Route::get('/', LandingPage::class)->name('index');
@@ -43,8 +44,6 @@ Route::middleware(['auth', 'role:admin|siswa|petugas'])->group(function () {
   // Book
   Route::get('/book', \App\Livewire\App\Book\Book::class)->name('book.index');
   Route::get('/book/{id}', DetailBook::class)->name('book.detail');
-  Route::get('/book/print-card/{id}', [App\Filament\Resources\BookResource::class, 'printCard'])->name('book.print-card');
-  Route::get('/book/print-cards-bulk/{ids}', [App\Filament\Resources\BookResource::class, 'printCardsBulk'])->name('book.print-cards-bulk');
 
   // Ebook
   Route::get('/buku/{book}/baca', [EbookController::class, 'show'])->name('ebook.show');
@@ -72,4 +71,15 @@ Route::middleware(['auth', 'role:admin|siswa|petugas'])->group(function () {
   // Riwayat extenion pinjaman
   Route::get('/perpanjang-peminjaman', PerpanjangPeminjaman::class)->name('perpanjang-peminjaman.index');
   Route::get('/perpanjang-peminjaman/{id}', PerpanjangPeminjamanDetail::class)->name('perpanjang-peminjaman.detail');
+});
+
+Route::middleware(['auth'])->group(function () {
+  Route::get('/book/{book}/print-card', [BookCardController::class, 'printCard'])
+    ->name('book.print-card');
+
+  Route::get('/book/print-cards-bulk/{ids}', [BookCardController::class, 'printCardsBulk'])
+    ->name('book.print-cards-bulk');
+
+  Route::get('/book/{book}/generate-card', [BookCardController::class, 'generateCard'])
+    ->name('book.generate-card');
 });

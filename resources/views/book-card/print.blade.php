@@ -42,7 +42,7 @@
             margin-bottom: 15px;
         }
 
-        .publisher-code {
+        .writer-code {
             font-size: 18px;
             font-weight: bold;
         }
@@ -59,7 +59,7 @@
     <div class="card">
         <div class="classification-code">{{ $cardData['classification_code'] }}</div>
         <div class="title-code">{{ $cardData['title_code'] }}</div>
-        <div class="publisher-code">{{ $cardData['publisher_code'] }}</div>
+        <div class="writer-code">{{ $cardData['writer_code'] }}</div>
     </div>
 
     <script>
