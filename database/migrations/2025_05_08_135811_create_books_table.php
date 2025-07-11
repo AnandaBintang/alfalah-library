@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('subtitle')->nullable();
+            $table->longText('subtitle')->nullable();
             $table->string('isbn')->nullable();
             $table->foreignId('publisher_id')->nullable()->constrained()->nullOnDelete();
             $table->integer('stock')->default(0);
             $table->string('type')->nullable();
             $table->boolean('is_student_work')->default(false);
+            $table->boolean('is_ebook')->default(false);
             $table->string('source')->nullable();
             $table->string('catalog_code')->nullable();
             $table->integer('publication_year')->nullable();
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->string('subject')->nullable();
             $table->text('abstract')->nullable();
             $table->string('cover_image_path')->nullable();
+            $table->string('file_ebook_path')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
