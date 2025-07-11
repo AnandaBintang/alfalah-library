@@ -94,6 +94,7 @@
 
   {{--  List Buku--}}
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+    @foreach($datas as $data)
 
     @if($datas->count() == 0)
       <div class="col-span-6 text-center text-gray-500 whitespace-pre-line p-10">

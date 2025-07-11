@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="{{ asset("logo/logo-alfalah.png") }}">
+  <link rel="icon" type="image/x-icon" href="{{ asset("foto/LOGO2.png") }}">
 
   <title>{{ $title ?? 'Perpustakaan Al-Falah' }}</title>
   @vite('resources/css/app.css')
@@ -22,14 +22,12 @@
 
 
   {{--    Navbar --}}
-  <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
-    <nav
-      class="fixed top-0 left-0 right-0 z-50 bg-white w-full mx-auto px-4 py-4 flex flex-wrap items-center justify-between shadow">
+  <header class="fixed top-0 left-0 z-50 w-full flex flex-wrap sm:justify-start sm:flex-nowrap bg-white text-sm py-3 shadow-md">
+  <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <div class="flex space-x-1.5">
-        <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
+        <img src="{{ asset('foto/LOGO1.png') }}" alt="logo" style="width: 180px; height: auto;" class="hidden sm:block">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
-           href="{{ route('book.index') }}" wire:navigate>SMP
-          Alfalah Assalam</a>
+           href="{{ route('book.index') }}" wire:navigate></a>
       </div>
 
       <div class="sm:order-3 flex items-center gap-x-2">
@@ -55,14 +53,16 @@
 
         @if(!\Illuminate\Support\Facades\Auth::check())
           <a type="button" href="{{ route('login') }}"
-             class="py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-hidden focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-            Login
+             class="hidden md:inline-flex py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            Masuk
           </a>
+
           <a type="button" href="{{ route('register') }}"
-             class="py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
-            Sign Up
+             class="hidden md:inline-flex py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            Daftar
           </a>
         @endif
+
       </div>
       <div id="hs-navbar-alignment"
            class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
@@ -70,7 +70,7 @@
         <div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
           @if(!\Illuminate\Support\Facades\Auth::check())
             <a
-              class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "
+              class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
               href="#fitur">Fitur</a>
             <a
               class="nav-link font-medium px-2 text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
@@ -133,21 +133,20 @@
               @endif
 
               @if(!\Illuminate\Support\Facades\Auth::check())
-                <div class=" md:hidden lg:hidden grid grid-cols-2 gap-3">
+                <div class="md:hidden grid grid-cols-2 gap-3">
                   <a type="button" href="{{ route('login') }}"
-                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-hidden focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                    Login
+                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                    Masuk
                   </a>
                   <a type="button" href="{{ route('register') }}"
-                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
-                    Sign Up
+                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                    Daftar
                   </a>
                 </div>
               @endif
-
+            </div>
             </div>
         </div>
-      </div>
     </nav>
   </header>
   {{--    Navbar --}}

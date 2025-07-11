@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="{{ asset("logo/logo-alfalah.png") }}">
+  <link rel="icon" type="image/x-icon" href="{{ asset("foto/LOGO2.png") }}">
 
   <title>{{ $title ?? 'Perpustakaan Al-Falah' }}</title>
   @vite('resources/css/app.css')
@@ -18,13 +18,12 @@
 
 
   {{--    Navbar --}}
-  <header class="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 mb-10">
-    <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
+  <header class="fixed top-10 left-0 z-50 w-full flex flex-wrap sm:justify-start sm:flex-nowrap bg-white text-sm py-3 shadow-md">
+  <nav class="max-w-[85rem] w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between">
       <div class="flex space-x-1.5">
-        <img src="{{ asset("logo/logo-alfalah.png") }}" alt="logo" class="hidden sm:block ">
+        <img src="{{ asset('foto/LOGO1.png') }}" alt="logo" style="width: 180px; height: auto;" class="hidden sm:block">
         <a class="sm:order-1 flex-none text-xl font-semibold focus:outline-hidden focus:opacity-80 "
-           href="{{ route('book.index') }}">SMP
-          Alfalah Assalam</a>
+           href="{{ route('book.index') }}" wire:navigate></a>
       </div>
 
       <div class="sm:order-3 flex items-center gap-x-2">
@@ -84,7 +83,7 @@
               <a
                 class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100"
                 href="{{ route('profile.index') }}">
-                Profile
+                Profil
               </a>
               <form method="post" action="{{ route('logout') }}" class="group">
                 @csrf
@@ -92,7 +91,7 @@
                   type="submit"
                   class="w-full text-left flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 border-none bg-transparent"
                 >
-                  Sign Out
+                  Keluar
                 </button>
               </form>
 
@@ -110,9 +109,9 @@
           {{--          <a--}}
           {{--            class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 "--}}
           {{--            href="#">Dashboard</a>--}}
-          <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+          <a class="font-medium {{ request()->routeIs('book.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-gray-400' }}"
              href="{{ route('book.index') }}">Buku</a>
-          <a class="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400"
+          <a class="font-medium {{ request()->routeIs('donasi.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-gray-400' }}"
              href="{{ route('donasi.store') }}">Donasi</a>
 
           <div class="hs-dropdown relative inline-flex">
@@ -197,7 +196,7 @@
 
 
   {{--    Main Content --}}
-  <div class="flex-grow">
+  <div class="flex-grow mt-38">
     {{ $slot }}
   </div>
   {{--    Main Content --}}
