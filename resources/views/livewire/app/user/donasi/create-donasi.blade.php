@@ -6,7 +6,7 @@
         <path stroke-linecap="round" stroke-linejoin="round"
               d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8zm0 0V6m0 12v-2"/>
       </svg>
-      Form Pengajuan Donasi
+      Form Pengajuan Donasi Buku
     </h2>
 
     <form wire:submit.prevent="submit" class="space-y-6">
@@ -58,19 +58,22 @@
 
       <!-- Tombol Submit -->
       <div class="text-right">
-        <button
-          type="submit"
-          class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-          <svg wire:loading.remove
-               class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-               viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M5 13l4 4L19 7"/>
-          </svg>
-          <span wire:loading
-                class="animate-spin inline-block size-4 border-3 border-current border-t-transparent rounded-full mr-1"></span>
-          Ajukan Donasi
-        </button>
+      <button
+        type="submit"
+        class="w-full sm:w-auto inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+        
+        <svg wire:loading.remove
+            class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M5 13l4 4L19 7"/>
+        </svg>
+
+        <span wire:loading
+              class="animate-spin inline-block size-4 border-3 border-current border-t-transparent rounded-full mr-1"></span>
+        Ajukan Donasi
+      </button>
+
       </div>
     </form>
   </div>

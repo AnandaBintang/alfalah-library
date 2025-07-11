@@ -14,7 +14,7 @@
           Kembangkan perjalanan literasi anda dengan menggunakan website terbaru SMP
           Alfalah Assalam. Sekaligus memperkenalkan kepada anda pengalaman menggunakan website perpustakaan disertai
           dengan berbagai fitur-fitur pendukung aktivitas perpustakaan, salah satunya mempermudah pencarian buku favorit
-          anda✨
+          anda
         </p>
 
         @if(\Illuminate\Support\Facades\Auth::check())
