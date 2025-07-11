@@ -55,11 +55,11 @@
 
         @if(!\Illuminate\Support\Facades\Auth::check())
           <a type="button" href="{{ route('login') }}"
-             class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
+             class="py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-hidden focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none">
             Login
           </a>
           <a type="button" href="{{ route('register') }}"
-             class="hidden md:block py-2 px-3 items-center gap-x-2 text-sm font-medium rounded-lg border border-black bg-white text-black hover:bg-white focus:outline-hidden focus:bg-white focus:outline-hidden focus:bg-white disabled:opacity-50 disabled:pointer-events-none">
+             class="py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
             Sign Up
           </a>
         @endif
@@ -147,6 +147,7 @@
 
             </div>
         </div>
+      </div>
     </nav>
   </header>
   {{--    Navbar --}}
