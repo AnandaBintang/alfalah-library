@@ -8,6 +8,7 @@ use App\Filament\Resources\DonationResource\Pages;
 use App\Models\Donation;
 use App\Notifications\DonationNotification;
 use App\Notifications\LoanNotification;
+use App\Notifications\StatusNotification;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -52,6 +53,9 @@ class DonationResource extends Resource
           ])
           ->afterStateUpdated(function ($record, $state) {
             DB::beginTransaction();
+            $user = $record->user;
+
+
             if ($state === ApprovalStatusEnum::APPROVED->value) {
               $quantity = $record->quantity;
 
@@ -72,10 +76,18 @@ class DonationResource extends Resource
                 ->seconds(5)
                 ->send();
 
-              $user = $record->user;
-
-              $user->notify(new DonationNotification($record->id, "Donasi disetujui."));
+              $user->notify(new StatusNotification('success', "Donasi disetujui."));
               DB::commit();
+            } elseif ($state === ApprovalStatusEnum::REJECTED->value) {
+              Notification::make()
+                ->title('Success')
+                ->success()
+                ->body('Buku ditolak.')
+                ->seconds(5)
+                ->send();
+
+              $user->notify(new StatusNotification('error', "Donasi ditolak."));
+              DB::rollBack();
             }
             DB::rollBack();
           })
