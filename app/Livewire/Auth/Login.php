@@ -9,7 +9,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.auth-app')]
-#[Title('Buku')]
+#[Title('Login')]
 class Login extends Component
 {
 
