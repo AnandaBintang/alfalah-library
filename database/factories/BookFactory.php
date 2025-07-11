@@ -9,20 +9,21 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class BookFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'title' => $this->faker->word(),
-            'subtitle' => $this->faker->sentence(),
-            'isbn' => $this->faker->isbn13(),
-            'stock' => $this->faker->randomNumber(),
-            'rack_location' => $this->faker->numberBetween(1, 100),
-            'cover_image_path' => 'cover-books/cover-book-1.jpg',
-        ];
-    }
+  /**
+   * Define the model's default state.
+   *
+   * @return array<string, mixed>
+   */
+  public function definition(): array
+  {
+    return [
+      'title' => $this->faker->word(),
+      'subtitle' => $this->faker->paragraphs(10, true),
+      'is_ebook' => false,
+      'isbn' => $this->faker->isbn13(),
+      'stock' => $this->faker->randomNumber(),
+      'rack_location' => $this->faker->numberBetween(1, 100),
+      'cover_image_path' => 'cover-books/cover-book-1.jpg',
+    ];
+  }
 }
