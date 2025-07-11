@@ -4,9 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Enum\ConfirmationStatusLoanEnum;
 use App\Enum\RoleEnum;
+use App\Enum\StatusLoanBookEnum;
 use App\Enum\TimelineStatusEnum;
 use App\Filament\Resources\LoanResource\Pages;
-use App\Filament\Resources\LoanResource\Widgets\LoanLegend;
+use App\Models\Book;
 use App\Models\Fine;
 use App\Models\Loan;
 use Filament\Forms\Components\DatePicker;
@@ -115,11 +116,12 @@ class LoanResource extends Resource
           ->label('Status Pengembalian')
           ->formatStateUsing(fn($state) => strtoupper($state))
           ->badge()
-          ->colors([
-            'info' => 'PENDING',
-            'success' => 'ONTIME',
-            'danger' => 'OVERDUE',
-          ]),
+          ->color(fn(string $state): string => match ($state) {
+            'pending' => 'primary',
+            'ontime' => 'success',
+            'overdue' => 'danger',
+            default => 'danger'
+          }),
 
         Tables\Columns\SelectColumn::make('loan_status')
           ->label('Status Buku')
@@ -247,13 +249,20 @@ class LoanResource extends Resource
               ->toArray()
           )
           ->afterStateUpdated(function ($state, $record) {
-            if ($state == \App\Enum\ConfirmationStatusLoanEnum::APPROVED->value) {
+            if ($state == ConfirmationStatusLoanEnum::APPROVED->value) {
               $record->update([
-                'loan_status' => \App\Enum\StatusLoanBookEnum::BORROWED->value,
+                'loan_status' => StatusLoanBookEnum::BORROWED->value,
+                'timeline_status' => TimelineStatusEnum::PENDING->value,
+              ]);
+            } elseif ($state == ConfirmationStatusLoanEnum::REJECTED->value) {
+              $record->update([
+                'loan_status' => StatusLoanBookEnum::REJECTED->value,
+                'timeline_status' => TimelineStatusEnum::REJECTED->value,
               ]);
             } else {
               $record->update([
-                'loan_status' => \App\Enum\StatusLoanBookEnum::PENDING->value,
+                'loan_status' => StatusLoanBookEnum::PENDING->value,
+                'timeline_status' => TimelineStatusEnum::PENDING->value,
               ]);
             }
           })
@@ -261,19 +270,67 @@ class LoanResource extends Resource
       ])
       ->filters([
         Tables\Filters\SelectFilter::make('loan_status')
-          ->label('Status Peminjaman')
+          ->label('Status Pengembalian')
           ->options(
             collect(\App\Enum\StatusLoanBookEnum::cases())
               ->mapWithKeys(fn($status) => [$status->value => ucfirst($status->name)])
               ->toArray()
           )
           ->default(null)
-          ->attribute('loan_status')
-          ->searchable(),
+          ->attribute('loan_status'),
+        Tables\Filters\SelectFilter::make('confirmation_status')
+          ->label('Status Admin')
+          ->options(
+            collect(ConfirmationStatusLoanEnum::cases())
+              ->mapWithKeys(fn($status) => [$status->value => ucfirst($status->name)])
+              ->toArray()
+          )
+          ->default(null)
+          ->attribute('confirmation_status'),
       ])
       ->actions([
         Tables\Actions\EditAction::make(),
         Tables\Actions\DeleteAction::make(),
+        Tables\Actions\Action::make('laporan_kondisi')
+          ->label('Lapor Kondisi Buku')
+          ->icon('heroicon-o-exclamation-circle')
+          ->color('danger')
+          ->form([
+            Select::make('status')
+              ->label('Status Kondisi')
+              ->options([
+                'RUSAK' => 'Rusak',
+                'HILANG' => 'Hilang',
+              ])
+              ->required(),
+
+            \Filament\Forms\Components\Textarea::make('notes')
+              ->label('Catatan Tambahan')
+              ->rows(4)
+              ->maxLength(1000),
+          ])
+          ->action(function (array $data, $record) {
+            \App\Models\KondisiBook::create([
+              'book_id' => $record->book_id,
+              'status' => $data['status'],
+              'notes' => $data['notes'],
+            ]);
+
+            $book = Book::find($record->book_id);
+
+            if ($book) {
+              $book->decrement('stock');
+            }
+
+            Loan::find($record->id)->delete();
+
+            \Filament\Notifications\Notification::make()
+              ->title('Laporan kondisi berhasil dikirim')
+              ->success()
+              ->body('Kondisi buku ' . $record->book->title . ' telah dilaporkan.')
+              ->send();
+          })
+          ->requiresConfirmation()
       ])
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
