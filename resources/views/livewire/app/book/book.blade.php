@@ -93,9 +93,7 @@
   @endif
 
   {{--  List Buku--}}
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-    @foreach($datas as $data)
-
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
     @if($datas->count() == 0)
       <div class="col-span-6 text-center text-gray-500 whitespace-pre-line p-10">
         Tidak ada buku yang ditemukan.<br>
