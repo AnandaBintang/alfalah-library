@@ -8,15 +8,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Publisher extends Model
 {
-    use HasFactory,SoftDeletes;
+  use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'address',
-    ];
+  protected $fillable = [
+    'name',
+    'address',
+    'phone',
+  ];
 
-    public function books()
-    {
-        return $this->hasMany(Book::class);
-    }
+  public function books()
+  {
+    return $this->hasMany(Book::class);
+  }
 }
