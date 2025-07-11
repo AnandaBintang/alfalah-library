@@ -19,6 +19,7 @@ use App\Livewire\LandingPage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\App\User\Profile\Profile;
+use App\Http\Controllers\EbookController;
 
 // Landing page
 Route::get('/', LandingPage::class)->name('index');
@@ -44,6 +45,9 @@ Route::middleware(['auth', 'role:admin|siswa|petugas'])->group(function () {
   Route::get('/book/{id}', DetailBook::class)->name('book.detail');
   Route::get('/book/print-card/{id}', [App\Filament\Resources\BookResource::class, 'printCard'])->name('book.print-card');
   Route::get('/book/print-cards-bulk/{ids}', [App\Filament\Resources\BookResource::class, 'printCardsBulk'])->name('book.print-cards-bulk');
+
+  // Ebook
+  Route::get('/buku/{book}/baca', [EbookController::class, 'show'])->name('ebook.show');
 
   // Cart
   Route::get('/cart', Cart::class)->name('cart.index');
