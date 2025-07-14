@@ -10,6 +10,7 @@ use App\Filament\Resources\LoanResource\Pages;
 use App\Models\Book;
 use App\Models\Fine;
 use App\Models\Loan;
+use App\Notifications\StatusNotification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -155,6 +156,7 @@ class LoanResource extends Resource
                   ->body('Status peminjaman sekarang adalah BORROWED.')
                   ->seconds(15)
                   ->send();
+
               } elseif ($state === \App\Enum\StatusLoanBookEnum::PENDING->value) {
                 // Update timeline status to PENDING
                 $record->update([
@@ -174,6 +176,7 @@ class LoanResource extends Resource
                   ->body('Status peminjaman sekarang adalah PENDING.')
                   ->seconds(15)
                   ->send();
+
               } elseif ($state === \App\Enum\StatusLoanBookEnum::RETURNED->value) {
                 // Update return_date and timeline status
                 $record->update([
@@ -249,22 +252,33 @@ class LoanResource extends Resource
               ->toArray()
           )
           ->afterStateUpdated(function ($state, $record) {
-            if ($state == ConfirmationStatusLoanEnum::APPROVED->value) {
-              $record->update([
-                'loan_status' => StatusLoanBookEnum::BORROWED->value,
-                'timeline_status' => TimelineStatusEnum::PENDING->value,
-              ]);
-            } elseif ($state == ConfirmationStatusLoanEnum::REJECTED->value) {
-              $record->update([
-                'loan_status' => StatusLoanBookEnum::REJECTED->value,
-                'timeline_status' => TimelineStatusEnum::REJECTED->value,
-              ]);
-            } else {
-              $record->update([
-                'loan_status' => StatusLoanBookEnum::PENDING->value,
-                'timeline_status' => TimelineStatusEnum::PENDING->value,
-              ]);
-            }
+            $user = $record->user;
+            DB::transaction(function () use ($state, $record, $user) {
+
+              if ($state == ConfirmationStatusLoanEnum::APPROVED->value) {
+                $record->update([
+                  'loan_status' => StatusLoanBookEnum::BORROWED->value,
+                  'timeline_status' => TimelineStatusEnum::PENDING->value,
+                ]);
+
+                $user->notify(new StatusNotification('success', 'Permintaan peminjaman buku Anda telah disetujui. Silakan ambil buku sesuai ketentuan.'));
+              } elseif ($state == ConfirmationStatusLoanEnum::REJECTED->value) {
+                $record->update([
+                  'loan_status' => StatusLoanBookEnum::REJECTED->value,
+                  'timeline_status' => TimelineStatusEnum::REJECTED->value,
+                ]);
+
+                $user->notify(new StatusNotification('danger', 'Permintaan peminjaman buku Anda telah ditolak. Silakan hubungi admin untuk informasi lebih lanjut.'));
+              } else {
+                $record->update([
+                  'loan_status' => StatusLoanBookEnum::PENDING->value,
+                  'timeline_status' => TimelineStatusEnum::PENDING->value,
+                ]);
+
+                $user->notify(new StatusNotification('pending', 'Status permintaan peminjaman buku Anda sedang ditinjau. Mohon menunggu konfirmasi selanjutnya.'));
+              }
+
+            });
           })
           ->placeholder(false),
       ])

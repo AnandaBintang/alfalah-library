@@ -20,7 +20,6 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->string('type')->nullable();
             $table->boolean('is_student_work')->default(false);
-            $table->boolean('is_ebook')->default(false);
             $table->string('source')->nullable();
             $table->string('catalog_code')->nullable();
             $table->integer('publication_year')->nullable();

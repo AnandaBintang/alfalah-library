@@ -33,17 +33,20 @@ class StatusNotification extends Notification
   {
     if ($this->status === 'success') {
       return [
+        'status' => $this->status,
         'message' => $this->message,
       ];
     }
 
     if ($this->status === 'pending') {
       return [
+        'status' => $this->status,
         'message' => $this->message,
       ];
     }
 
     return [
+      'status' => $this->status,
       'message' => $this->message,
     ];
 
