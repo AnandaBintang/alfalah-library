@@ -4,16 +4,20 @@ namespace App\Filament\Resources;
 
 use App\Enum\RoleEnum;
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -23,9 +27,7 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 class UserResource extends Resource
 {
   protected static ?string $model = User::class;
-
   protected static ?string $navigationIcon = 'heroicon-o-users';
-
   protected static ?string $navigationLabel = 'User';
 
   public static function getNavigationGroup(): ?string
@@ -37,31 +39,63 @@ class UserResource extends Resource
   {
     return $form
       ->schema([
-        Forms\Components\TextInput::make('name')
-          ->label('Nama')
-          ->required()
-          ->maxLength(255),
-        Forms\Components\TextInput::make('email')
-          ->label('Email')
-          ->email()
-          ->required()
-          ->unique(User::class, 'email', ignoreRecord: true)
-          ->maxLength(255),
-        Forms\Components\TextInput::make('password')
-          ->label('Password')
-          ->password()
-          ->required(fn($livewire) => $livewire instanceof Pages\CreateUser)
-          ->minLength(8)
-          ->maxLength(255)
-          ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
-          ->dehydrated(fn($state) => !is_null($state)),
-        Forms\Components\Select::make('role')
-          ->label('Role')
-          ->options(Role::pluck('name', 'name')->toArray())
-          ->required(),
-        Forms\Components\Toggle::make('is_active')
-          ->label('Aktif')
-          ->default(true),
+        Forms\Components\Section::make('Informasi Dasar')
+          ->schema([
+            Forms\Components\TextInput::make('name')
+              ->label('Nama')
+              ->required()
+              ->maxLength(255),
+
+            Forms\Components\TextInput::make('email')
+              ->label('Email')
+              ->email()
+              ->required()
+              ->unique(User::class, 'email', ignoreRecord: true)
+              ->maxLength(255),
+
+            Forms\Components\TextInput::make('password')
+              ->label('Password')
+              ->password()
+              ->required(fn($livewire) => $livewire instanceof Pages\CreateUser)
+              ->minLength(8)
+              ->maxLength(255)
+              ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
+              ->dehydrated(fn($state) => !is_null($state)),
+
+            Forms\Components\Select::make('role')
+              ->label('Role')
+              ->options(Role::pluck('name', 'name')->toArray())
+              ->required()
+              ->live()
+              ->afterStateUpdated(function ($state, $set) {
+                if (in_array($state, [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])) {
+                  $set('is_active', true);
+                }
+              })
+              ->dehydrated(false),
+          ])
+          ->columns(2),
+
+        Forms\Components\Section::make('Status Aktivasi')
+          ->schema([
+            Forms\Components\Toggle::make('is_active')
+              ->label('Aktif')
+              ->default(false)
+              ->disabled(fn(Forms\Get $get) => in_array($get('role'), [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value]))
+              ->helperText(
+                fn(Forms\Get $get) =>
+                in_array($get('role'), [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])
+                  ? 'Admin dan Petugas tidak perlu aktivasi manual.'
+                  : 'Siswa perlu aktivasi manual. Masa berlaku 3 tahun sejak aktivasi.'
+              ),
+
+            Forms\Components\DateTimePicker::make('expires_at')
+              ->label('Masa Berlaku Hingga')
+              ->disabled()
+              ->visible(fn(Forms\Get $get) => $get('role') === RoleEnum::SISWA->value)
+              ->helperText('Otomatis diset 3 tahun untuk siswa. Admin/Petugas tidak ada masa berlaku.'),
+          ])
+          ->columns(2),
       ]);
   }
 
@@ -70,12 +104,13 @@ class UserResource extends Resource
     return $table
       ->modifyQueryUsing(function (Builder $query) {
         return $query
+          ->with('roles')
           ->leftJoin('model_has_roles', function ($join) {
             $join->on('users.id', '=', 'model_has_roles.model_id')
               ->where('model_has_roles.model_type', '=', \App\Models\User::class);
           })
           ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-          ->leftJoin('profiles', 'users.id', '=', 'profiles.user_id') // Tambahkan join ke profiles
+          ->leftJoin('profiles', 'users.id', '=', 'profiles.user_id')
           ->select([
             'users.*',
             'roles.name as role_name',
@@ -86,64 +121,410 @@ class UserResource extends Resource
             'profiles.phone as profile_phone',
           ]);
       })
-      ->columns([
-        Tables\Columns\TextColumn::make('name')->label('Nama')->sortable()->searchable(),
-        Tables\Columns\TextColumn::make('email')->label('Email')->sortable()->searchable(),
-        Tables\Columns\TextColumn::make('role_name')->label('Role')->sortable()->searchable(),
-        Tables\Columns\TextColumn::make('profile_nis')
-          ->label('NIS')
-          ->getStateUsing(fn($record) => $record->profile_nis ?? '-'),
-        Tables\Columns\TextColumn::make('profile_nisn')
-          ->label('NISN')
-          ->getStateUsing(fn($record) => $record->profile_nisn ?? '-'),
-        Tables\Columns\TextColumn::make('profile_class')
-          ->label('Kelas')
-          ->getStateUsing(fn($record) => $record->profile_class ?? '-'),
-        Tables\Columns\TextColumn::make('profile_address')
-          ->label('Alamat')
-          ->getStateUsing(fn($record) => $record->profile_address ?? '-'),
-        Tables\Columns\TextColumn::make('profile_phone')
-          ->label('No HP')
-          ->getStateUsing(fn($record) => $record->profile_phone ?? '-'),
-        Tables\Columns\IconColumn::make('is_active')->label('Aktif')->boolean()->sortable(),
-      ])
-      ->filters([
-        // SelectFilter::make('role_name')
-        //   ->label('Role')
-        //   ->options(
-        //     Role::pluck('name', 'name')->toArray()
-        //   )
-        //   ->query(function (Builder $query, $state) {
-        //     if ($state) {
-        //       $query->where('roles.name', $state);
-        //     }
-        //   }),
-      ])
-      ->headerActions([
-        ExportAction::make()
-          ->label('Export Semua User'),
-      ])
-      ->actions([
-        Tables\Actions\EditAction::make(),
-        Tables\Actions\DeleteAction::make(),
-      ])
-      ->bulkActions([
-        ExportBulkAction::make()
-          ->label('Export yang Dipilih'),
-        Tables\Actions\BulkActionGroup::make([
-          Tables\Actions\DeleteBulkAction::make(),
-        ]),
-      ]);
+      ->columns(static::getTableColumns())
+      ->filters(static::getTableFilters())
+      ->headerActions(static::getTableHeaderActions())
+      ->actions(static::getTableActions())
+      ->bulkActions(static::getTableBulkActions());
+  }
+
+  protected static function getTableColumns(): array
+  {
+    return [
+      Tables\Columns\TextColumn::make('name')
+        ->label('Nama')
+        ->sortable()
+        ->searchable(),
+
+      Tables\Columns\TextColumn::make('email')
+        ->label('Email')
+        ->sortable()
+        ->searchable(),
+
+      Tables\Columns\TextColumn::make('role_name')
+        ->label('Role')
+        ->sortable()
+        ->searchable(),
+
+      Tables\Columns\TextColumn::make('profile_nis')
+        ->label('NIS')
+        ->getStateUsing(fn($record) => $record?->profile_nis ?? '-'),
+
+      Tables\Columns\TextColumn::make('profile_class')
+        ->label('Kelas')
+        ->getStateUsing(fn($record) => $record?->profile_class ?? '-'),
+
+      Tables\Columns\TextColumn::make('expiry_status')
+        ->label('Status')
+        ->badge()
+        ->color(static::getExpiryStatusColor(...))
+        ->getStateUsing(static::getExpiryStatus(...)),
+
+      Tables\Columns\TextColumn::make('expires_at')
+        ->label('Berlaku Hingga')
+        ->getStateUsing(function ($record) {
+          if (!$record || !$record->expires_at) {
+            return '-';
+          }
+          return $record->expires_at->format('d M Y');
+        })
+        ->sortable()
+        ->toggleable(isToggledHiddenByDefault: true),
+      Tables\Columns\IconColumn::make('is_active')
+        ->label('Aktif')
+        ->boolean()
+        ->sortable()
+        ->visible(static::shouldShowActiveColumn(...)),
+    ];
+  }
+
+  protected static function getTableHeaderActions(): array
+  {
+    return [
+      ExportAction::make()
+        ->label('Export Semua User'),
+
+      Tables\Actions\Action::make('check_expired')
+        ->label('Cek User Kadaluarsa')
+        ->icon('heroicon-o-clock')
+        ->color('warning')
+        ->action(function () {
+          $count = User::checkAndDeactivateExpiredUsers();
+
+          Notification::make()
+            ->title('Pemeriksaan User Kadaluarsa')
+            ->body("$count user kadaluarsa telah dinonaktifkan.")
+            ->success()
+            ->send();
+        }),
+    ];
+  }
+
+  protected static function getTableActions(): array
+  {
+    return [
+      Tables\Actions\EditAction::make(),
+
+      Tables\Actions\Action::make('activate_account')
+        ->label('Aktivasi')
+        ->icon('heroicon-o-check-circle')
+        ->color('success')
+        ->visible(function (?User $record) {
+          if (!$record) return false;
+          try {
+            return $record->isStudent() && !$record->is_active;
+          } catch (\Exception $e) {
+            return false;
+          }
+        })
+        ->form([
+          Forms\Components\Select::make('years')
+            ->label('Masa Berlaku')
+            ->options([
+              1 => '1 Tahun',
+              2 => '2 Tahun',
+              3 => '3 Tahun',
+            ])
+            ->default(3)
+            ->required(),
+        ])
+        ->action(function (User $record, array $data) {
+          $record->update([
+            'is_active' => true,
+            'activated_at' => now(),
+            'expires_at' => now()->addYears($data['years']),
+          ]);
+
+          Notification::make()
+            ->title('Akun Diaktivasi')
+            ->body("Akun {$record->name} telah diaktivasi untuk {$data['years']} tahun.")
+            ->success()
+            ->send();
+        }),
+
+      Tables\Actions\Action::make('extend_account')
+        ->label('Perpanjang')
+        ->icon('heroicon-o-calendar-days')
+        ->color('info')
+        ->visible(function (?User $record) {
+          if (!$record) return false;
+          try {
+            return $record->isStudent() && $record->is_active;
+          } catch (\Exception $e) {
+            return false;
+          }
+        })
+        ->form([
+          Forms\Components\Select::make('years')
+            ->label('Perpanjang')
+            ->options([
+              1 => '1 Tahun',
+              2 => '2 Tahun',
+              3 => '3 Tahun',
+            ])
+            ->default(3)
+            ->required(),
+        ])
+        ->action(function (User $record, array $data) {
+          $record->extendAccount($data['years']);
+
+          Notification::make()
+            ->title('Masa Berlaku Diperpanjang')
+            ->body("Akun {$record->name} diperpanjang {$data['years']} tahun.")
+            ->success()
+            ->send();
+        }),
+
+      Tables\Actions\DeleteAction::make(),
+    ];
+  }
+
+  protected static function getTableBulkActions(): array
+  {
+    return [
+      ExportBulkAction::make()
+        ->label('Export yang Dipilih'),
+
+      Tables\Actions\BulkAction::make('smart_action')
+        ->label('Kelola Siswa Terpilih')
+        ->icon('heroicon-o-academic-cap')
+        ->color('success')
+        ->requiresConfirmation()
+        ->modalHeading(fn($records) => static::getSmartActionHeading($records))
+        ->modalDescription(fn($records) => static::getSmartActionDescription($records))
+        ->form(fn($records) => static::getSmartActionForm($records))
+        ->action(function ($records, array $data) {
+          return static::executeSmartAction($records, $data);
+        }),
+
+      Tables\Actions\BulkActionGroup::make([
+        Tables\Actions\DeleteBulkAction::make(),
+      ]),
+    ];
+  }
+
+  protected static function getSmartActionHeading($records): string
+  {
+    $analysis = static::analyzeRecords($records);
+
+    if ($analysis['all_inactive_students']) {
+      return 'Aktivasi Akun Siswa';
+    } elseif ($analysis['all_active_students']) {
+      return 'Perpanjang Masa Berlaku Siswa';
+    } else {
+      return 'Kelola Akun Siswa';
+    }
+  }
+
+  protected static function getSmartActionDescription($records): string
+  {
+    $analysis = static::analyzeRecords($records);
+
+    if ($analysis['all_inactive_students']) {
+      return 'Semua siswa yang dipilih akan diaktivasi dan diberi masa berlaku sesuai pilihan.';
+    } elseif ($analysis['all_active_students']) {
+      return 'Masa berlaku akun semua siswa yang dipilih akan diperpanjang sesuai pilihan.';
+    } else {
+      return 'Sistem akan memproses setiap akun sesuai dengan statusnya masing-masing.';
+    }
+  }
+
+  protected static function getSmartActionForm($records): array
+  {
+    $analysis = static::analyzeRecords($records);
+
+    $form = [
+      Forms\Components\Select::make('years')
+        ->label($analysis['all_inactive_students'] ? 'Masa Berlaku Akun' : ($analysis['all_active_students'] ? 'Perpanjang Masa Berlaku' : 'Masa Berlaku'))
+        ->options([
+          1 => '1 Tahun',
+          2 => '2 Tahun',
+          3 => '3 Tahun',
+        ])
+        ->default(3)
+        ->required()
+        ->helperText('Pilih berapa lama akun siswa akan berlaku.'),
+    ];
+
+    if (!$analysis['all_inactive_students'] && !$analysis['all_active_students']) {
+      $form[] = Forms\Components\Placeholder::make('info')
+        ->content('📋 Detail yang akan diproses:' . PHP_EOL .
+          '• Siswa belum aktif: ' . $analysis['inactive_count'] . ' akan diaktivasi' . PHP_EOL .
+          '• Siswa sudah aktif: ' . $analysis['active_count'] . ' akan diperpanjang' . PHP_EOL .
+          '• Lainnya: ' . $analysis['other_count'] . ' akan dilewati')
+        ->extraAttributes(['class' => 'text-sm text-gray-600 whitespace-pre-line']);
+    }
+
+    return $form;
+  }
+
+  protected static function executeSmartAction($records, array $data)
+  {
+    $activated = 0;
+    $extended = 0;
+    $skipped = 0;
+
+    foreach ($records as $record) {
+      if (!$record) continue;
+
+      try {
+        if ($record->isStudent() && !$record->is_active) {
+          $record->update([
+            'is_active' => true,
+            'activated_at' => now(),
+            'expires_at' => now()->addYears($data['years']),
+          ]);
+          $activated++;
+        } elseif ($record->isStudent() && $record->is_active) {
+          $record->extendAccount($data['years']);
+          $extended++;
+        } else {
+          $skipped++;
+        }
+      } catch (\Exception $e) {
+        $skipped++;
+        continue;
+      }
+    }
+
+    $messages = [];
+    if ($activated > 0) {
+      $messages[] = "$activated akun siswa berhasil diaktivasi";
+    }
+    if ($extended > 0) {
+      $messages[] = "$extended akun siswa berhasil diperpanjang";
+    }
+    if ($skipped > 0) {
+      $messages[] = "$skipped record dilewati";
+    }
+
+    $title = 'Pemrosesan Akun Selesai';
+    $body = implode(', ', $messages) . " untuk masa berlaku {$data['years']} tahun.";
+
+    Notification::make()
+      ->title($title)
+      ->body($body)
+      ->success()
+      ->send();
+  }
+
+  protected static function analyzeRecords($records): array
+  {
+    $inactive_students = 0;
+    $active_students = 0;
+    $others = 0;
+
+    foreach ($records as $record) {
+      if (!$record) continue;
+
+      try {
+        if ($record->isStudent()) {
+          if ($record->is_active) {
+            $active_students++;
+          } else {
+            $inactive_students++;
+          }
+        } else {
+          $others++;
+        }
+      } catch (\Exception $e) {
+        $others++;
+      }
+    }
+
+    return [
+      'all_inactive_students' => $inactive_students > 0 && $active_students == 0 && $others == 0,
+      'all_active_students' => $active_students > 0 && $inactive_students == 0 && $others == 0,
+      'inactive_count' => $inactive_students,
+      'active_count' => $active_students,
+      'other_count' => $others,
+    ];
+  }
+
+  protected static function getExpiryStatus($record): string
+  {
+    if (!$record) return '-';
+
+    try {
+      return $record->expiry_status;
+    } catch (\Exception $e) {
+      return 'Error';
+    }
+  }
+
+  protected static function getExpiryStatusColor($record): string
+  {
+    if (!$record) return 'gray';
+
+    try {
+      return $record->expiry_status_color;
+    } catch (\Exception $e) {
+      return 'gray';
+    }
+  }
+
+  protected static function shouldShowActiveColumn($record): bool
+  {
+    if (!$record) return false;
+
+    try {
+      return !$record->hasRole([RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value]);
+    } catch (\Exception $e) {
+      return true;
+    }
+  }
+
+  protected static function getTableFilters(): array
+  {
+    return [
+      SelectFilter::make('role_name')
+        ->label('Role')
+        ->relationship('roles', 'name')
+        ->multiple()
+        ->preload(),
+
+      Tables\Filters\Filter::make('active_users')
+        ->label('User Aktif')
+        ->query(
+          fn(Builder $query) => $query->where('users.is_active', true)
+            ->orWhereHas('roles', function ($q) {
+              $q->whereIn('name', [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value]);
+            })
+        ),
+
+      Tables\Filters\Filter::make('inactive_students')
+        ->label('Siswa Belum Aktif')
+        ->query(
+          fn(Builder $query) => $query->where('users.is_active', false)
+            ->whereHas('roles', function ($q) {
+              $q->where('name', RoleEnum::SISWA->value);
+            })
+        ),
+
+      Tables\Filters\Filter::make('expired_users')
+        ->label('Siswa Kadaluarsa')
+        ->query(
+          fn(Builder $query) => $query->where('users.expires_at', '<=', now())
+            ->whereHas('roles', function ($q) {
+              $q->where('name', RoleEnum::SISWA->value);
+            })
+        ),
+
+      Tables\Filters\Filter::make('expiring_soon')
+        ->label('Akan Kadaluarsa (30 hari)')
+        ->query(
+          fn(Builder $query) => $query->whereBetween('users.expires_at', [now(), now()->addDays(30)])
+            ->whereHas('roles', function ($q) {
+              $q->where('name', RoleEnum::SISWA->value);
+            })
+        ),
+    ];
   }
 
   public static function getRelations(): array
   {
-    return [
-      //
-    ];
+    return [];
   }
-
-
 
   public static function getPages(): array
   {
@@ -166,11 +547,83 @@ class UserResource extends Resource
       'email' => 'Email',
       'role_name' => 'Role',
       'is_active' => 'Aktif',
+      'activated_at' => 'Diaktivasi',
+      'expires_at' => 'Berlaku Hingga',
       'profile_nis' => 'NIS',
       'profile_nisn' => 'NISN',
       'profile_class' => 'Kelas',
       'profile_address' => 'Alamat',
       'profile_phone' => 'No HP',
     ];
+  }
+
+  public static function getNavigationBadge(): ?string
+  {
+    try {
+      $expiring = User::where('is_active', true)
+        ->whereBetween('expires_at', [now(), now()->addDays(30)])
+        ->whereHas('roles', function ($q) {
+          $q->where('name', RoleEnum::SISWA->value);
+        })
+        ->count();
+
+      $inactive = User::where('is_active', false)
+        ->whereHas('roles', function ($q) {
+          $q->where('name', RoleEnum::SISWA->value);
+        })
+        ->count();
+
+      $total = $expiring + $inactive;
+
+      return $total > 0 ? $total : null;
+    } catch (\Exception $e) {
+      return null;
+    }
+  }
+
+  protected static function shouldShowBulkActivate($livewire): bool
+  {
+    $selectedRecords = $livewire->getSelectedTableRecords();
+
+    if (empty($selectedRecords)) {
+      return false;
+    }
+
+    foreach ($selectedRecords as $record) {
+      if (!$record) continue;
+
+      try {
+        if (!$record->isStudent() || $record->is_active) {
+          return false;
+        }
+      } catch (\Exception $e) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  protected static function shouldShowBulkExtend($livewire): bool
+  {
+    $selectedRecords = $livewire->getSelectedTableRecords();
+
+    if (empty($selectedRecords)) {
+      return false;
+    }
+
+    foreach ($selectedRecords as $record) {
+      if (!$record) continue;
+
+      try {
+        if (!$record->isStudent() || !$record->is_active) {
+          return false;
+        }
+      } catch (\Exception $e) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

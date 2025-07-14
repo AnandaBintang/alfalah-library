@@ -4,29 +4,36 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Enum\RoleEnum;
 use App\Filament\Resources\UserResource;
-use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Auth;
 
 class CreateUser extends CreateRecord
 {
   protected static string $resource = UserResource::class;
 
-  public function mount(): void
+  protected function mutateFormDataBeforeCreate(array $data): array
   {
-    if (!Auth::check() || !Auth::user()->hasRole(RoleEnum::ADMIN->value)) {
-     $this->redirect(route('login'));
+    $this->roleToAssign = $data['role'] ?? null;
+
+    unset($data['role']);
+
+    return $data;
+  }
+
+  protected function afterCreate(): void
+  {
+    if ($this->roleToAssign) {
+      $this->record->assignRole($this->roleToAssign);
+
+      if (in_array($this->roleToAssign, [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])) {
+        $this->record->update([
+          'is_active' => true,
+          'activated_at' => now(),
+          'expires_at' => null,
+        ]);
+      }
     }
   }
 
-
-  protected function handleRecordCreation(array $data): User
-  {
-    $user = User::create($data);
-    if (isset($data['role'])) {
-      $user->syncRoles($data['role']);
-    }
-    return $user;
-  }
+  protected $roleToAssign;
 }
