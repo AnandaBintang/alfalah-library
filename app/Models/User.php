@@ -249,4 +249,28 @@ class User extends Authenticatable implements FilamentUser
       return false;
     }
   }
+
+  public function getLibraryCardData(): array
+  {
+    $profile = $this->profile;
+
+    return [
+      'name' => $this->name,
+      'nis' => $profile?->nis ?? '-',
+      'class' => $profile?->class ?? '-',
+      'gender' => $profile?->gender ?? '-',
+      'photo' => $profile?->photo_url ?? null,
+      'barcode_data' => $profile?->nis ?? $this->id,
+      'member_since' => $this->activated_at?->format('Y') ?? date('Y'),
+    ];
+  }
+
+  public function canPrintLibraryCard(): bool
+  {
+    try {
+      return $this->isStudent() && $this->is_active;
+    } catch (\Exception $e) {
+      return false;
+    }
+  }
 }

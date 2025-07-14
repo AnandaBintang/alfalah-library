@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\App\User\Profile\Profile;
 use App\Http\Controllers\EbookController;
 use App\Http\Controllers\BookCardController;
+use App\Http\Controllers\LibraryCardController;
 
 // Landing page
 Route::get('/', LandingPage::class)->name('index');
@@ -82,4 +83,12 @@ Route::middleware(['auth'])->group(function () {
 
   Route::get('/book/{book}/generate-card', [BookCardController::class, 'generateCard'])
     ->name('book.generate-card');
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+  Route::get('/library-card/print/{user}', [LibraryCardController::class, 'printSingle'])
+    ->name('library-card.print-single');
+
+  Route::get('/library-card/print-bulk', [LibraryCardController::class, 'printBulk'])
+    ->name('library-card.print-bulk');
 });

@@ -205,6 +205,21 @@ class UserResource extends Resource
     return [
       Tables\Actions\EditAction::make(),
 
+      Tables\Actions\Action::make('print_library_card')
+        ->label('Cetak Kartu')
+        ->icon('heroicon-o-identification')
+        ->color('indigo')
+        ->visible(function (?User $record) {
+          if (!$record) return false;
+          try {
+            return $record->canPrintLibraryCard();
+          } catch (\Exception $e) {
+            return false;
+          }
+        })
+        ->url(fn(User $record): string => route('library-card.print-single', $record))
+        ->openUrlInNewTab(),
+
       Tables\Actions\Action::make('activate_account')
         ->label('Aktivasi')
         ->icon('heroicon-o-check-circle')
@@ -284,6 +299,51 @@ class UserResource extends Resource
     return [
       ExportBulkAction::make()
         ->label('Export yang Dipilih'),
+
+      // Bulk action untuk cetak kartu
+      Tables\Actions\BulkAction::make('bulk_print_cards')
+        ->label('Cetak Kartu Terpilih')
+        ->icon('heroicon-o-identification')
+        ->color('indigo')
+        ->requiresConfirmation()
+        ->modalHeading('Cetak Kartu Perpustakaan')
+        ->modalDescription('Kartu akan dicetak untuk semua siswa aktif yang dipilih.')
+        ->action(function ($records) {
+          $activeStudentIds = [];
+
+          foreach ($records as $record) {
+            if (!$record) continue;
+
+            try {
+              if ($record->canPrintLibraryCard()) {
+                $activeStudentIds[] = $record->id;
+              }
+            } catch (\Exception $e) {
+              continue;
+            }
+          }
+
+          if (empty($activeStudentIds)) {
+            Notification::make()
+              ->title('Tidak Ada Kartu yang Dapat Dicetak')
+              ->body('Tidak ada siswa aktif yang dipilih.')
+              ->warning()
+              ->send();
+            return;
+          }
+
+          // Redirect ke bulk print
+          $url = route('library-card.print-bulk', ['user_ids' => $activeStudentIds]);
+
+          Notification::make()
+            ->title('Membuka Cetak Kartu')
+            ->body(count($activeStudentIds) . ' kartu akan dicetak.')
+            ->success()
+            ->send();
+
+          // Return redirect untuk membuka di tab baru
+          return redirect($url);
+        }),
 
       Tables\Actions\BulkAction::make('smart_action')
         ->label('Kelola Siswa Terpilih')

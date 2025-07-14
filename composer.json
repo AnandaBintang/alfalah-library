@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.1",
         "eightynine/filament-excel-import": "^3.1",
         "filament/filament": "^3.3",
         "flowframe/laravel-trend": "^0.4.0",
@@ -15,6 +16,7 @@
         "laravel/tinker": "^2.10.1",
         "leandrocfe/filament-apex-charts": "^3.2",
         "livewire/livewire": "^3.6",
+        "picqer/php-barcode-generator": "^3.2",
         "pxlrbt/filament-excel": "^2.4",
         "spatie/laravel-permission": "^6.19"
     },
