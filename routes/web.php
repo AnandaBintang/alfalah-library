@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\BookCardController;
+use App\Http\Controllers\EbookController;
+use App\Http\Controllers\LibraryCardController;
 use App\Livewire\App\Book\DetailBook;
 use App\Livewire\App\Cart\Cart;
 use App\Livewire\App\User\Denda\Denda;
@@ -13,16 +16,16 @@ use App\Livewire\App\User\Peminjaman\Peminjaman;
 use App\Livewire\App\User\Peminjaman\PeminjamanDetail;
 use App\Livewire\App\User\Pengembalian\Pengembalian;
 use App\Livewire\App\User\Pengembalian\PengembalianDetail;
+use App\Livewire\App\User\Profile\Profile;
+use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\LandingPage;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\App\User\Profile\Profile;
-use App\Http\Controllers\EbookController;
-use App\Http\Controllers\BookCardController;
-use App\Http\Controllers\LibraryCardController;
-
+use App\Livewire\Auth\RequestResetPassword;
+use App\Livewire\Auth\ResetPassword;
 // Landing page
 Route::get('/', LandingPage::class)->name('index');
 
@@ -36,6 +39,10 @@ Route::post('/logout', function () {
 
   return redirect()->route('login');
 })->name('logout');
+
+// Reset password
+Route::get('/forgot-password', RequestResetPassword::class)->name('password.request');
+Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
 
 Route::middleware(['auth', 'role:admin|siswa|petugas'])->group(function () {
 
@@ -92,3 +99,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
   Route::get('/library-card/print-bulk', [LibraryCardController::class, 'printBulk'])
     ->name('library-card.print-bulk');
 });
+
+
+// Verify email
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+  $request->fulfill();
+
+  return redirect(route('book.index'));
+})->middleware(['auth', 'signed'])->name('verification.verify');
