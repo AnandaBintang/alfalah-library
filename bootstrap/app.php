@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
       'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
     ]);
 
+    // Ubah domain ini pas production
+    $middleware->trustHosts(at: ['localhost']);
+
     //        $middleware->redirectGuestsTo(fn () => redirect()->route('login'));
   })
   ->withExceptions(function (Exceptions $exceptions) {

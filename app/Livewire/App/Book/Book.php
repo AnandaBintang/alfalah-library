@@ -4,7 +4,9 @@ namespace App\Livewire\App\Book;
 
 use App\Models\Book as ModelBook;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -24,6 +26,23 @@ class Book extends Component
   public $inputCategory = '';
 
   public string $bookType = 'ebook';
+
+  public function mount()
+  {
+    $user = Auth::user();
+
+    if (!$user->hasVerifiedEmail()) {
+
+      $user->sendEmailVerificationNotification();
+
+      LivewireAlert::title('Verifikasi Email Diperlukan')
+        ->text('Silakan cek email kamu untuk verifikasi. Jika tidak menemukan emailnya, klik tombol di halaman profil untuk mengirim ulang.')
+        ->warning()
+        ->timer(5000)
+        ->withConfirmButton('Oke')
+        ->show();
+    }
+  }
 
 
   public function updating($property)
@@ -60,7 +79,7 @@ class Book extends Component
     $datas = $query->paginate(15);
     $categories = Category::orderBy('name')->get();
 
-  // Ambil top 10 book_id yang paling sering dipinjam (untuk keperluan filter)
+    // Ambil top 10 book_id yang paling sering dipinjam (untuk keperluan filter)
     $topLoanedIds = DB::table('loans')
       ->select('book_id', DB::raw('count(*) as total'))
       ->where('loan_status', '!=', 'REJECTED')

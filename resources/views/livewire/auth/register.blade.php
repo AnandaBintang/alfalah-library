@@ -6,6 +6,12 @@
       <div class="mb-4 text-red-600 font-medium">{{ $error }}</div>
     @endif
 
+    @if (session('status'))
+      <div class="mb-4 text-green-600 font-medium text-sm text-center">
+        {{ session('status') }}
+      </div>
+    @endif
+
     <form wire:submit.prevent="register" class="space-y-6">
       <div>
         <label for="name" class="block mb-1 font-medium text-gray-700">Nama Lengkap</label>

@@ -7,6 +7,18 @@
     </div>
   @endif
 
+  @if (!Auth::user()->hasVerifiedEmail())
+    <div class="p-3 mb-4 bg-yellow-100 text-yellow-800 border border-yellow-400 rounded">
+      Email Anda belum diverifikasi.
+      <button
+        wire:click="sendVerificationEmail"
+        class="ml-2 underline text-blue-600 hover:text-blue-800"
+      >
+        Kirim ulang verifikasi
+      </button>
+    </div>
+  @endif
+
   {{-- Profile Form --}}
   <form wire:submit.prevent="updateProfile" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
     <div>
@@ -40,15 +52,15 @@
       <textarea wire:model.defer="address" class="w-full border rounded p-2" rows="3"></textarea>
     </div>
 
-    <div class="md:col-span-2">
-      <label class="block font-medium">Kartu Perpustakaan</label>
-      <input wire:model="library_card_image" type="file" class="w-full border rounded p-2">
-      @if ($old_image)
-        <div class="mt-2">
-          <img src="{{ asset('storage/' . $old_image) }}" class="w-32 rounded shadow" alt="Kartu Perpustakaan">
-        </div>
-      @endif
-    </div>
+{{--    <div class="md:col-span-2">--}}
+{{--      <label class="block font-medium">Kartu Perpustakaan</label>--}}
+{{--      <input wire:model="library_card_image" type="file" class="w-full border rounded p-2">--}}
+{{--      @if ($old_image)--}}
+{{--        <div class="mt-2">--}}
+{{--          <img src="{{ asset('storage/' . $old_image) }}" class="w-32 rounded shadow" alt="Kartu Perpustakaan">--}}
+{{--        </div>--}}
+{{--      @endif--}}
+{{--    </div>--}}
 
     <div class="md:col-span-2 text-right">
       <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan Profil</button>
@@ -72,6 +84,12 @@
     <div>
       <label class="block font-medium">Konfirmasi Password Baru</label>
       <input wire:model.defer="new_password_confirmation" type="password" class="w-full border rounded p-2">
+    </div>
+
+    <div class="text-sm mt-1 text-right">
+      <a href="{{ route('password.request') }}" class="text-blue-600 hover:underline" wire:navigate>
+        Lupa password lama?
+      </a>
     </div>
 
     <div>

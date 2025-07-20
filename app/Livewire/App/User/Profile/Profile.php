@@ -37,6 +37,23 @@ class Profile extends Component
     $this->old_image = $user->profile->library_card_image_path ?? null;
   }
 
+  public function sendVerificationEmail()
+  {
+    $user = Auth::user();
+
+    if (!$user->hasVerifiedEmail()) {
+      $user->sendEmailVerificationNotification();
+
+      LivewireAlert::title('Success')
+        ->text('Email verifikasi berhasil dikirim, silahkan cek email anda.')
+        ->success()
+        ->timer(4000)
+        ->position('top-end')
+        ->toast()
+        ->show();
+    }
+  }
+
   public function updateProfile()
   {
 
