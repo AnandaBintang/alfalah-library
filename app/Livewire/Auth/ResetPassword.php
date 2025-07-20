@@ -22,6 +22,11 @@ class ResetPassword extends Component
 
   public function mount($token)
   {
+    $this->email = request()->query('email', '');
+
+    if (empty($this->email)) {
+      $this->email = session('password_reset_email', '');
+    }
     $this->token = $token;
   }
 
@@ -51,9 +56,7 @@ class ResetPassword extends Component
     );
 
     if ($status === Password::PASSWORD_RESET) {
-      return redirect()->route('login')->with('status', __($status));
-    } else {
-      $this->addError('email', __($status));
+      return redirect()->route('login')->with('status', 'Password berhasil dirubah');
     }
   }
 
