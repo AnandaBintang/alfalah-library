@@ -12,6 +12,7 @@
         "filament/filament": "^3.3",
         "flowframe/laravel-trend": "^0.4.0",
         "jantinnerezo/livewire-alert": "*",
+        "laravel-lang/lang": "^15.22",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "leandrocfe/filament-apex-charts": "^3.2",
