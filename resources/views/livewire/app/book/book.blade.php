@@ -1,4 +1,4 @@
-<div class="mx-auto mb-19 w-10/12">
+<div class="mx-auto mb-19 w-10/12 border-gray-100 p-5 rounded-lg shadow-lg">
   {{-- Search & Filter --}}
   <form wire:submit.prevent="filterCategory"
         class="mb-6 flex flex-col md:flex-row md:items-end md:gap-6 gap-4">
@@ -116,7 +116,7 @@
   {{--  List Buku--}}
 
   {{--  Pagination button--}}
-  <div class="mt-4 flex justify-center">
+  <div class="mt-7 flex justify-center">
     {{ $datas->links("vendor.livewire.custom-pagination") }}
   </div>
   {{--  Pagination button--}}
