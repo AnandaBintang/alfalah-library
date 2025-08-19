@@ -25,9 +25,9 @@ class AppServiceProvider extends ServiceProvider
   public function boot(): void
   {
     // Notif
-    FilamentAsset::register([
-      Js::make('sweetalert2', Vite::asset('resources/js/sweetalert2.js'))
-    ]);
+//    FilamentAsset::register([
+//      Js::make('sweetalert2', Vite::asset('resources/js/sweetalert2.js'))
+//    ]);
 
     // CUstom email
     VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
