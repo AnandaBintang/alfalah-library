@@ -125,10 +125,10 @@ class DetailBook extends Component
         ->position('center')
         ->timer(6000)
         ->success()
-        ->withCancelButton('Keranjang')
-        ->onConfirm('backToCart')
-        ->withConfirmButton('Daftar Buku')
-        ->onConfirm('backToListBook')
+        ->withConfirmButton('Daftar Buku') // ini tombol utama
+        ->withCancelButton('Keranjang')    // ini tombol cancel
+        ->onConfirm('backToListBook')    // kalau klik "Daftar Buku"
+        ->onDismiss('backToCart')
         ->show();
 
       DB::commit();
