@@ -22,7 +22,12 @@
     </form>
 
     <div class="text-center text-sm text-gray-600">
+      @if(url()->previous() == route('login') || url()->previous() == route('register'))
       <a href="{{ route('login') }}" class="text-blue-600 font-medium hover:underline" wire:navigate>Kembali ke login</a>
+      @else
+        <a href="{{ route('profile.index') }}" class="text-blue-600 font-medium hover:underline" wire:navigate>Kembali ke profile</a>
+      @endif
+
     </div>
   </div>
 </div>
