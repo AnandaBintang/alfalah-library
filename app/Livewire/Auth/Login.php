@@ -40,6 +40,7 @@ class Login extends Component
         ->position('center')
         ->timer(5500)
         ->error()
+        ->toast()
         ->show();
     }
   }
