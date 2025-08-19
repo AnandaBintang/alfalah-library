@@ -1,4 +1,5 @@
-<div class="mx-auto mb-19 w-10/12">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<div class="mx-auto mb-19 w-10/12 border border-gray-100 p-5 rounded-lg shadow-lg h-screen">
   <h1 class="text-2xl font-bold mb-6">Keranjang Buku</h1>
 
   @if($cartItems && $cartItems->count() > 0)
@@ -18,9 +19,24 @@
       </button>
     </div>
   @else
-    <p class="text-center text-gray-500 whitespace-pre-line p-10">
-      Keranjang kamu kosong. <br>
-      Silakan pilih buku untuk ditambahkan ke keranjang.
-    </p>
+    {{-- Tampilan kalau keranjang kosong --}}
+    <div class="flex flex-col items-center justify-center h-full">
+      <lottie-player
+        src="{{ asset('lottie/no-data.json') }}"
+        background="transparent"
+        speed="1"
+        style="width: 300px; height: 300px;"
+        loop
+        autoplay>
+      </lottie-player>
+      <p class="mt-4 text-gray-500 text-center">
+        Keranjang kamu kosong. <br>
+        Silakan pilih buku untuk ditambahkan ke keranjang.
+      </p>
+      <a href="{{ route('book.index') }}"
+         class="mt-6 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+        Pilih Buku
+      </a>
+    </div>
   @endif
 </div>
