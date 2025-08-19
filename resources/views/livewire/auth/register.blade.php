@@ -12,7 +12,7 @@
       </div>
     @endif
 
-    <form wire:submit.prevent="register" class="space-y-6">
+    <form wire:submit.prevent="register" class="space-y-6" >
       <div>
         <label for="name" class="block mb-1 font-medium text-gray-700">Nama Lengkap</label>
         <input wire:model.defer="name" id="name" type="text" required autofocus
