@@ -11,6 +11,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use function Laravel\Prompts\error;
 
 
 #[Title('Profile')]
@@ -110,6 +111,12 @@ class Profile extends Component
     $user = auth()->user();
     if (!Hash::check($this->current_password, $user->password)) {
       $this->addError('current_password', 'Password lama salah.');
+      LivewireAlert::title('Error!')
+        ->text('Password lama salah.')
+        ->position('top-right')
+        ->timer(3000)
+        ->error()
+        ->show();
       return;
     }
 
