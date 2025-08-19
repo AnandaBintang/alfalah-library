@@ -26,6 +26,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\RequestResetPassword;
 use App\Livewire\Auth\ResetPassword;
+use App\Livewire\Auth\VerifyNotice;
+
+
 // Landing page
 Route::get('/', LandingPage::class)->name('index');
 
@@ -43,6 +46,7 @@ Route::post('/logout', function () {
 // Reset password
 Route::get('/forgot-password', RequestResetPassword::class)->name('password.request');
 Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
+Route::get('/email/verify', VerifyNotice::class)->middleware('auth')->name('verification.notice');
 
 Route::middleware(['auth', 'role:admin|siswa|petugas'])->group(function () {
 
@@ -51,10 +55,10 @@ Route::middleware(['auth', 'role:admin|siswa|petugas'])->group(function () {
 
   // Book
   Route::get('/book', \App\Livewire\App\Book\Book::class)->name('book.index');
-  Route::get('/book/{id}', DetailBook::class)->name('book.detail');
+  Route::get('/book/{id}', DetailBook::class)->middleware('verified')->name('book.detail');
 
   // Ebook
-  Route::get('/buku/{book}/baca', [EbookController::class, 'show'])->name('ebook.show');
+  Route::get('/buku/{book}/baca', [EbookController::class, 'show'])->middleware('verified')->name('ebook.show');
 
   // Cart
   Route::get('/cart', Cart::class)->name('cart.index');
