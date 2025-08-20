@@ -22,11 +22,7 @@ class ResetPassword extends Component
 
   public function mount($token)
   {
-    $this->email = request()->query('email', '');
-
-    if (empty($this->email)) {
-      $this->email = session('password_reset_email', '');
-    }
+    $this->email = request()->query('email');
     $this->token = $token;
   }
 
@@ -62,6 +58,8 @@ class ResetPassword extends Component
 
   public function render()
   {
-    return view('livewire.auth.reset-password');
+    return view('livewire.auth.reset-password', [
+      'email' => $this->email,
+    ]);
   }
 }
