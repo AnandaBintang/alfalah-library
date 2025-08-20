@@ -9,15 +9,19 @@ use App\Models\Donation;
 use App\Notifications\DonationNotification;
 use App\Notifications\LoanNotification;
 use App\Notifications\StatusNotification;
-use Filament\Forms\Components\FileUpload;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Svg\Tag\Text;
 
 class DonationResource extends Resource
 {
@@ -30,11 +34,11 @@ class DonationResource extends Resource
     return $form
       ->schema([
         TextInput::make('user.name')
-        ->label('Nama Donatur'),
+          ->label('Nama Donatur'),
         TextInput::make('item_name')
-        ->label('Nama Buku'),
+          ->label('Nama Buku'),
         TextInput::make('quantity')
-        ->label('Jumlah'),
+          ->label('Jumlah'),
       ]);
   }
 
@@ -44,8 +48,8 @@ class DonationResource extends Resource
       ->poll('10s')
       ->columns([
         Tables\Columns\ImageColumn::make('image')
-        ->openUrlInNewTab()
-        ->label('Gambar'),
+          ->openUrlInNewTab()
+          ->label('Gambar'),
         Tables\Columns\TextColumn::make('user.name')
           ->searchable()
           ->label('Nama Donatur'),
@@ -73,7 +77,7 @@ class DonationResource extends Resource
             if ($state === ApprovalStatusEnum::APPROVED->value) {
               $quantity = $record->quantity;
 
-              $book  = \App\Models\Book::updateOrCreate(
+              $book = \App\Models\Book::updateOrCreate(
                 ['title' => $record->item_name],
                 [
                   'subtitle' => $record->description,
@@ -122,6 +126,36 @@ class DonationResource extends Resource
       ])
       ->actions([
         Tables\Actions\EditAction::make(),
+        Tables\Actions\ViewAction::make('Detail Donatur')
+          ->infolist([
+            Section::make('Detail Item')
+              ->schema([
+                ImageEntry::make('image'),
+                TextEntry::make('item_name')->label('Nama Buku'),
+                TextEntry::make('description')->label('Deskripsi'),
+                TextEntry::make('quantity')->label('Jumlah'),
+                TextEntry::make('donation_date')->label('Tanggal Donasi Masuk'),
+              ]),
+
+            Section::make('Detail Donatur')
+              ->schema([
+                TextEntry::make('user.name')->label('Nama Donatur'),
+                TextEntry::make('user.email')->label('Email Donatur'),
+                TextEntry::make('user.profile.phone')->label('No. Telp Donatur'),
+                TextEntry::make('user.profile.class')->label('Kelas'),
+                TextEntry::make('user.profile.level')->label('Level'),
+
+                // Hanya tampil kalau ada NIS
+                TextEntry::make('user.profile.nis')
+                  ->label('NIS')
+                  ->visible(fn($record) => !empty($record->user->profile->nis)),
+
+                // Hanya tampil kalau ada NISN
+                TextEntry::make('user.profile.nisn')
+                  ->label('NISN')
+                  ->visible(fn($record) => !empty($record->user->profile->nisn)),
+              ]),
+          ])
       ])
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
