@@ -10,7 +10,7 @@ use App\Notifications\DonationNotification;
 use App\Notifications\LoanNotification;
 use App\Notifications\StatusNotification;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Section;
+use Filament\Infolists\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\ImageEntry;
