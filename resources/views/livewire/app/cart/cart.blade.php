@@ -1,5 +1,5 @@
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <div class="mx-auto mb-19 w-10/12 border border-gray-100 p-5 rounded-lg shadow-lg h-screen">
+  <div>
   <h1 class="text-2xl font-bold mb-6">Keranjang Buku</h1>
 
   @if($cartItems && $cartItems->count() > 0)
@@ -39,4 +39,6 @@
       </a>
     </div>
   @endif
+
+  </div>
 </div>
