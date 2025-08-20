@@ -8,7 +8,7 @@
     <form wire:submit.prevent="resetPassword" class="space-y-4">
       <div>
         <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
-        <input wire:model.defer="email" id="email" type="email" required
+        <input wire:model.defer="email" id="email" type="email" required readonly
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         @error('email') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
       </div>

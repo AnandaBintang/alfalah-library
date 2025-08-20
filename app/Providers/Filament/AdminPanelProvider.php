@@ -37,6 +37,8 @@ class AdminPanelProvider extends PanelProvider
       ->id('admin')
       ->path('admin')
       ->login()
+      ->passwordReset()
+      ->emailVerification()
       ->favicon(asset('logo/logo-alfalah.png'))
       ->colors([
         'primary' => Color::Amber,
