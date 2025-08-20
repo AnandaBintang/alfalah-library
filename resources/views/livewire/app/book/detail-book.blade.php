@@ -20,6 +20,9 @@
         <p><strong>Lokasi Rak:</strong> Rak {{ $data->rack_location ?? '-' }}</p>
         <p><strong>Publisher:</strong> {{ $data->publisher->name ?? '-' }}</p>
 
+        @isset($data->writer?->name)
+          <p><strong>Nama Penulis:</strong> {{ $data->writer->name ?? '-' }}</p>
+        @endisset
         <p>
           <strong>Kategori:</strong>
           @forelse ($data->categories as $category)
