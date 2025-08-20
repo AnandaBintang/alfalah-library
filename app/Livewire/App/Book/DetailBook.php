@@ -35,7 +35,7 @@ class DetailBook extends Component
 
   protected function loadBook()
   {
-    $this->book = ModelsBook::with('categories', 'publisher')->find($this->id);
+    $this->book = ModelsBook::with('categories', 'publisher', 'writer')->find($this->id);
 
     if (!$this->book) {
       abort(404);
