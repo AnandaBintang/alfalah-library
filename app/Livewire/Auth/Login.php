@@ -44,23 +44,24 @@ class Login extends Component
       return;
     }
 
-    // Check apakah user belum pernah login
-    if ($user->expires_at == null && $user->activated_at == null) {
-      $user->is_active = 1;
-      $user->activated_at = now();
-      $user->expires_at = now()->addYear(3);
-
-      $user->save();
-    }
-
-    if ($user->expires_at < now() && $user->expires_at != null && $user->activated_at != null ) {
-      LivewireAlert::title('Oops!')
-        ->text('Sepertinya akun kamu sudah nonaktif, segera hubungi administrator.')
+    if ($user->is_active == 0) {
+      LivewireAlert::title('Akun Tidak Aktif!')
+        ->text('Akun Anda tidak aktif. Silakan hubungi administrator untuk mengaktifkan akun.')
         ->withConfirmButton('Ok')
         ->error()
         ->timer(8000)
         ->show();
       return;
+    }
+
+    if ($user->activated_at == null) {
+      $user->activated_at = now();
+      $user->save();
+    }
+
+    if ($user->expires_at == null) {
+      $user->expires_at = now()->addYear(3);
+      $user->save();
     }
 
     if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
@@ -69,7 +70,7 @@ class Login extends Component
       return redirect()->route('book.index');
     } else {
       LivewireAlert::title('Error!')
-        ->text('Account atau password salah.')
+        ->text('Email atau password salah.')
         ->position('top-end')
         ->timer(5500)
         ->error()
