@@ -32,12 +32,12 @@ class CartItem extends Component
 
       $this->item->delete();
 
-      $this->dispatch('refreshCart');
+      $this->dispatch('refreshCart')->to(Cart::class);
 
       LivewireAlert::title('Success!')
         ->text('Berhasil menghapus item.')
         ->position('center')
-        ->timer(5500)
+        ->timer(5000)
         ->success()
         ->show();
     });
