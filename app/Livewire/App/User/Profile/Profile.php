@@ -113,7 +113,7 @@ class Profile extends Component
       $this->addError('current_password', 'Password lama salah.');
       LivewireAlert::title('Error!')
         ->text('Password lama salah.')
-        ->position('top-right')
+        ->position('top-end')
         ->timer(3000)
         ->error()
         ->show();
