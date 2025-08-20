@@ -45,10 +45,20 @@
         </div>
 
         <!-- Upload Gambar -->
-        <div>
+        <div
+          x-data="{ uploading: false, progress: 0 }"
+          x-on:livewire-upload-start="uploading = true"
+          x-on:livewire-upload-finish="uploading = false"
+          x-on:livewire-upload-cancel="uploading = false"
+          x-on:livewire-upload-error="uploading = false"
+          x-on:livewire-upload-progress="progress = $event.detail.progress">
+
           <label class="block text-sm font-medium text-gray-700">Gambar (opsional)</label>
           <input wire:model="image" type="file" accept="image/*"
                  class="mt-1 block w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"/>
+          <div x-show="uploading">
+            <progress max="100" x-bind:value="progress"></progress>
+          </div>
           @error('image') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
           {{--          @if ($image)--}}
           {{--            <img src="{{ $image->temporaryUrl() }}">--}}
@@ -58,21 +68,21 @@
 
       <!-- Tombol Submit -->
       <div class="text-right">
-      <button
-        type="submit"
-        class="w-full sm:w-auto inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-        
-        <svg wire:loading.remove
-            class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M5 13l4 4L19 7"/>
-        </svg>
+        <button
+          type="submit"
+          class="w-full sm:w-auto inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
 
-        <span wire:loading
-              class="animate-spin inline-block size-4 border-3 border-current border-t-transparent rounded-full mr-1"></span>
-        Ajukan Donasi
-      </button>
+          <svg wire:loading.remove
+               class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M5 13l4 4L19 7"/>
+          </svg>
+
+          <span wire:loading
+                class="animate-spin inline-block size-4 border-3 border-current border-t-transparent rounded-full mr-1"></span>
+          Ajukan Donasi
+        </button>
 
       </div>
     </form>
