@@ -34,11 +34,16 @@ class LoanExtensionResource extends Resource
       ->columns([
         Tables\Columns\TextColumn::make('loan.user.name')
           ->searchable()
+          ->label('Nama Siswa')
           ->sortable(),
         Tables\Columns\TextColumn::make('previous_due_date')
-          ->dateTime('d M Y'),
+          ->dateTime('d M Y')
+          ->label('Tanggal Sebelumnya')
+        ,
         Tables\Columns\TextColumn::make('new_due_date')
-          ->dateTime('d M Y'),
+          ->dateTime('d M Y')
+          ->label('Tanggal Pengajuan Baru')
+        ,
         Tables\Columns\SelectColumn::make('status')
           ->options(
             collect(\App\Enum\ApprovalStatusEnum::cases())
