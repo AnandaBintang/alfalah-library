@@ -9,6 +9,8 @@ use App\Models\Donation;
 use App\Notifications\DonationNotification;
 use App\Notifications\LoanNotification;
 use App\Notifications\StatusNotification;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -27,7 +29,12 @@ class DonationResource extends Resource
   {
     return $form
       ->schema([
-        //
+        TextInput::make('user.name')
+        ->label('Nama Donatur'),
+        TextInput::make('item_name')
+        ->label('Nama Buku'),
+        TextInput::make('quantity')
+        ->label('Jumlah'),
       ]);
   }
 
@@ -36,14 +43,21 @@ class DonationResource extends Resource
     return $table
       ->poll('10s')
       ->columns([
-        Tables\Columns\ImageColumn::make('image'),
+        Tables\Columns\ImageColumn::make('image')
+        ->openUrlInNewTab()
+        ->label('Gambar'),
         Tables\Columns\TextColumn::make('user.name')
-          ->searchable(),
-        Tables\Columns\TextColumn::make('item_name'),
-        Tables\Columns\TextColumn::make('description'),
-        Tables\Columns\TextColumn::make('quantity'),
+          ->searchable()
+          ->label('Nama Donatur'),
+        Tables\Columns\TextColumn::make('item_name')
+          ->label('Nama Buku'),
+        Tables\Columns\TextColumn::make('description')
+          ->label('Deskripsi'),
+        Tables\Columns\TextColumn::make('quantity')
+          ->label('Total Donasi Buku'),
         Tables\Columns\TextColumn::make('donation_date')
-          ->dateTime('d M Y'),
+          ->dateTime('d M Y')
+          ->label('Tanggal Donasi Masuk'),
         Tables\Columns\SelectColumn::make('status')
           ->label('Status')
           ->options([
