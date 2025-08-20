@@ -48,6 +48,19 @@ class UserSeeder extends Seeder
         );
         $admin->assignRole(RoleEnum::ADMIN->value);
 
+        // Akun admin
+      $perpustakaanAlfalah = User::firstOrCreate(
+        ['email' => 'perpustakaansmpalfalahassalam@gmail.com'],
+        [
+          'name' => 'Admin Perpustakaan SMP Alfalah',
+          'password' => Hash::make('password'),
+        ]
+      );
+
+      $perpustakaanAlfalah->assignRole(RoleEnum::ADMIN->value);
+
+
+
         // User random factory
         User::factory()
             ->count(100)
