@@ -13,13 +13,19 @@ class CardProduct extends Component
     public $image;
 
     public $link;
+    public $writerName;
 
-    public function mount($cardTitle = null, $description = null, $image = null, $link = null)
+    public function mount($cardTitle = null, $description = null, $image = null, $link = null, $writerName = null)
     {
         $this->image = $image;
         $this->cardTitle = $cardTitle;
         $this->description = $description;
         $this->link = $link;
+        $this->writerName = $writerName;
+    }
+
+    public function goToDetailBook($idBook) {
+      $this->redirect(route('book.detail', $idBook));
     }
 
     public function render()
