@@ -27,17 +27,21 @@
         </div>
 
         <div>
-          <span class="font-medium">Status:</span>
-          <p>
-            @if ($data->status === 'returned')
-              <span class="text-green-600 font-semibold">Sudah Dikembalikan</span>
-            @elseif ($data->status === 'borrowed')
-              <span class="text-yellow-600 font-semibold">Dipinjam</span>
-            @else
-              <span class="text-gray-600 font-semibold">{{ ucfirst($data->status) }}</span>
-            @endif
-          </p>
-        </div>
+  <span class="font-medium">Status:</span>
+  <p>
+    @if ($data->loan_status === 'returned')
+      <span class="inline-block px-2 py-1 rounded text-xs font-semibold bg-blue-500 text-white">Returned</span>
+    @elseif ($data->loan_status === 'borrowed')
+      <span class="inline-block px-2 py-1 rounded text-xs font-semibold bg-green-500 text-white">Approved</span>
+    @elseif ($data->loan_status === 'overdue')
+      <span class="inline-block px-2 py-1 rounded text-xs font-semibold bg-red-500 text-white">Rejected</span>
+    @elseif ($data->loan_status === 'pending')
+      <span class="inline-block px-2 py-1 rounded text-xs font-semibold bg-blue-500 text-white">Pending</span>
+    @else
+      <span class="text-gray-600 font-semibold">{{ ucfirst($data->loan_status) }}</span>
+    @endif
+  </p>
+</div>
 
         @if ($data->description)
           <div class="md:col-span-2">
