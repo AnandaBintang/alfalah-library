@@ -7,6 +7,7 @@ use App\Filament\Resources\DendaResource\Pages;
 use App\Models\Fine;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -79,6 +80,32 @@ class DendaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+              Tables\Actions\ViewAction::make('Detail')
+                ->label('Lihat Detail')
+                ->infolist([
+                  Forms\Components\Section::make('Detail Siswa')
+                    ->schema([
+                      TextEntry::make('user.name')->label('Nama Siswa'),
+                      TextEntry::make('user.email')->label('Email Siswa'),
+                      TextEntry::make('user.profile.class')->label('Kelas'),
+                      TextEntry::make('user.profile.phone')->label('No Telp Siswa'),
+                      TextEntry::make('user.profile.address')->label('Alamat Siswa'),
+                      TextEntry::make('user.profile.nis')
+                        ->label('NIS')
+                        ->visible(fn ($record) => !empty($record->user->profile->nis)),
+                      TextEntry::make('user.profile.nisn')
+                        ->label('NISN')
+                        ->visible(fn ($record) => !empty($record->user->profile->nisn)),
+                    ]),
+                  Forms\Components\Section::make('Detail Peminjaman')
+                    ->schema([
+                      TextEntry::make('loan.book.title')->label('Judul Buku'),
+                      TextEntry::make('amount')->label('Total'),
+                      TextEntry::make('status')->label('Status'),
+                      TextEntry::make('loan.loan_date')->label('Tanggal Pinjam'),
+                      TextEntry::make('loan.return_date')->label('Tanggal Kembali'),
+                    ]),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
