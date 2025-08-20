@@ -57,13 +57,21 @@ class DendaResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->searchable()
+                  ->label('Nama Siswa')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
                     ->searchable()
+                  ->label('Email Siswa')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('amount'),
-                Tables\Columns\TextColumn::make('loan.book.name'),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('amount')
+                  ->label('Total')
+              ,
+                Tables\Columns\TextColumn::make('loan.book.name')
+                  ->label('Judul Buku')
+              ,
+                Tables\Columns\TextColumn::make('status')
+                  ->label('Status')
+              ,
 
             ])
             ->filters([
