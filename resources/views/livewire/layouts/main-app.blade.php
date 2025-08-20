@@ -211,6 +211,7 @@
   {{--    Footer --}}
 
   <wireui:scripts/>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <script src="//unpkg.com/alpinejs" defer></script>
   @livewireScripts
 </body>
