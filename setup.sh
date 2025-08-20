@@ -13,6 +13,17 @@ echo "Laravel Deployment Setup"
 echo "Environment: $ENV"
 echo "=============================="
 
+# --- Clean previous builds ---
+echo "Cleaning previous storage symlink and build files..."
+# Hapus symlink storage jika ada
+if [ -L "public/storage" ]; then
+    rm public/storage
+fi
+# Hapus hasil build frontend
+if [ -d "public/build" ]; then
+    rm -rf public/build
+fi
+
 # 1. Install Composer dependencies
 echo "Installing Composer dependencies..."
 composer install
