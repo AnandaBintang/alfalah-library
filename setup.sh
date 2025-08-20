@@ -59,7 +59,7 @@ if [ "$ENV" == "production" ]; then
     php artisan migrate --force
     php artisan db:seed --class=UserSeeder --force
 else
-    php artisan migrate
+    php artisan migrate:fresh
     php artisan db:seed
 fi
 
