@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Filament\Infolists\Components\Section;
 
 class DendaResource extends Resource
 {
@@ -83,7 +84,7 @@ class DendaResource extends Resource
               Tables\Actions\ViewAction::make('Detail')
                 ->label('Lihat Detail')
                 ->infolist([
-                  Forms\Components\Section::make('Detail Siswa')
+                    Section::make('Detail Siswa')
                     ->schema([
                       TextEntry::make('user.name')->label('Nama Siswa'),
                       TextEntry::make('user.email')->label('Email Siswa'),
@@ -97,7 +98,7 @@ class DendaResource extends Resource
                         ->label('NISN')
                         ->visible(fn ($record) => !empty($record->user->profile->nisn)),
                     ]),
-                  Forms\Components\Section::make('Detail Peminjaman')
+                  Section::make('Detail Peminjaman')
                     ->schema([
                       TextEntry::make('loan.book.title')->label('Judul Buku'),
                       TextEntry::make('amount')->label('Total'),
