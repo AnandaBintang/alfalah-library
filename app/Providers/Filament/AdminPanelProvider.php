@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
       ->path('admin')
       ->login()
       ->passwordReset()
-      ->emailVerification()
+      // ->emailVerification()
       ->spa()
       ->favicon(asset('logo/logo-alfalah.png'))
       ->colors([

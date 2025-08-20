@@ -104,7 +104,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     ->name('library-card.print-bulk');
 });
 
-
 // Verify email
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
   $request->fulfill();

@@ -6,23 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('books', function (Blueprint $table) {
-          $table->dropColumn('file_ebook_path');
-        });
-    }
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::table('books', function (Blueprint $table) {
+      $table->dropColumn('ebook_file_path');
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('books', function (Blueprint $table) {
-          $table->string('file_ebook_path')->nullable();
-        });
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::table('books', function (Blueprint $table) {
+      $table->string('file_ebook_path')->nullable();
+    });
+  }
 };
