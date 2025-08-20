@@ -232,9 +232,7 @@ class BookResource extends Resource
     return $table
       ->columns([
         ImageColumn::make('cover_image_path')
-          ->label('Cover')
-          ->circular()
-          ->size(50),
+          ->label('Cover'),
 
         TextColumn::make('title')
           ->label('Judul Buku')
@@ -373,7 +371,8 @@ class BookResource extends Resource
       ])
       ->emptyStateActions([
         CreateAction::make(),
-      ]);
+      ])
+      ;
   }
 
   public static function getRelations(): array
