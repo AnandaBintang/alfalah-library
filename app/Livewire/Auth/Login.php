@@ -37,7 +37,7 @@ class Login extends Component
     } else {
       LivewireAlert::title('Error!')
         ->text('Account atau password salah.')
-        ->position('center')
+        ->position('top-end')
         ->timer(5500)
         ->error()
         ->toast()
