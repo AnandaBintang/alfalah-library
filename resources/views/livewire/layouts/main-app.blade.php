@@ -65,7 +65,7 @@
           {{--          </span>--}}
         </a>
 
-        <div class=" hs-dropdown relative inline-flex">
+        <div class=" hs-dropdown [--placement:bottom-right] relative inline-flex">
           <button id="hs-dropdown-with-dividers" type="button"
                   class=" hs-dropdown-toggle py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-800 shadow-2xs bg-white focus:outline-hidden disabled:opacity-50 cursor-pointer"
                   aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
