@@ -1,4 +1,4 @@
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border rounded-xl shadow-md bg-white">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border border-gray-100 rounded-xl shadow-md bg-white">
   {{-- Book Info --}}
   <div class="flex items-start sm:items-center gap-4 w-full sm:w-auto">
     <img src="{{ asset('storage/' . $item->book->cover_image_path) }}" alt="{{ $item->book->title }}"
