@@ -20,7 +20,7 @@ class Profile extends Component
 {
   use WithFileUploads;
 
-  public $name, $nis, $nisn, $class, $address, $phone;
+  public $name, $email, $nis, $nisn, $class, $address, $phone;
   public $library_card_image, $old_image;
 
   public $current_password, $new_password, $new_password_confirmation;
@@ -36,6 +36,7 @@ class Profile extends Component
     $this->address = $user->profile->address ?? '';
     $this->phone = $user->profile->phone ?? '';
     $this->old_image = $user->profile->library_card_image_path ?? null;
+    $this->email = $user->email ?? '';
   }
 
   public function sendVerificationEmail()
@@ -65,6 +66,7 @@ class Profile extends Component
       'class' => 'nullable|string|max:50',
       'address' => 'nullable|string',
       'phone' => 'nullable|string|max:20',
+      'email' => 'required|email|max:255|unique:users,email,' . auth()->id(),
       'library_card_image' => 'nullable|image|max:5120',
     ]);
 
@@ -130,6 +132,7 @@ class Profile extends Component
       ->text('Password berhasil diubah.')
       ->position('center')
       ->timer(5500)
+      ->withConfirmButton("Ok")
       ->success()
       ->show();
   }
