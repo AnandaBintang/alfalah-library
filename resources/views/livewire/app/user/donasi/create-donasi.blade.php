@@ -77,5 +77,8 @@
 
       </div>
     </form>
+    <small class="block mt-3 text-gray-500 text-xs">
+      Jika penyimpanan gagal, inputan tidak akan hilang sehingga bisa dikirim ulang.
+    </small>
   </div>
 </div>
