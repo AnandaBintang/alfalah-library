@@ -6,10 +6,13 @@ use App\Enum\ApprovalStatusEnum;
 use App\Enum\RoleEnum;
 use App\Filament\Resources\DonationResource\Pages;
 use App\Models\Donation;
+use App\Models\User;
 use App\Notifications\DonationNotification;
 use App\Notifications\LoanNotification;
 use App\Notifications\StatusNotification;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -33,12 +36,31 @@ class DonationResource extends Resource
   {
     return $form
       ->schema([
-        TextInput::make('user.name')
-          ->label('Nama Donatur'),
+        Select::make('user.name')
+          ->label('Nama Donatur')
+          ->searchable()
+          ->getSearchResultsUsing(fn(?string $search) => User::query()
+            ->where('name', 'like', "%{$search}%")
+            ->whereHas('roles', function ($q) {
+              $q->where('name', RoleEnum::SISWA->value);
+            })
+            ->limit(20)
+            ->pluck('name', 'id')
+            ->all()
+          )
+          ->getOptionLabelUsing(fn($value): ?string => User::find($value)?->name)
+          ->loadingMessage('Loading...')
+          ->noSearchResultsMessage('Siswa tidak ditemukan.')
+          ->required()
+        ,
         TextInput::make('item_name')
-          ->label('Nama Buku'),
+          ->label('Nama Buku')
+          ->required(),
         TextInput::make('quantity')
-          ->label('Jumlah'),
+          ->label('Jumlah')
+          ->required(),
+        FileUpload::make('image')
+          ->label('Gambar Buku')
       ]);
   }
 
