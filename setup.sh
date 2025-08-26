@@ -64,6 +64,10 @@ echo "Setting up environment..."
 # cp .env.example .env
 php artisan key:generate
 
+php artisan vendor:publish --tag=filament-actions-migrations
+
+php artisan generate:import-template
+
 # 8. Run database migrations and seeders
 echo "Running migrations and seeders..."
 if [ "$ENV" == "production" ]; then
