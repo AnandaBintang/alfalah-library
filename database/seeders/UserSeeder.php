@@ -24,6 +24,9 @@ class UserSeeder extends Seeder
         ['email' => 'siswa@gmail.com'],
         [
           'name' => 'siswa',
+          'is_active' => true,
+          'activated_at' => now(),
+          'expires_at' => now()->addYear(3),
           'password' => Hash::make('password'),
         ]
       );
@@ -79,7 +82,18 @@ class UserSeeder extends Seeder
     }
 
     if (config('app.env') === 'production') {
-      // Setup akun admin dengan email penjaga perpustakaan
+      $perpustakaanAlfalah = User::firstOrCreate(
+        ['email' => 'perpustakaansmpalfalahassalam@gmail.com'],
+        [
+          'name' => 'Admin Perpustakaan SMP Alfalah',
+          'password' => Hash::make('password'),
+          'is_active' => true,
+          'activated_at' => now(),
+          'expires_at' => now()->addYear(3),
+        ]
+      );
+
+      $perpustakaanAlfalah->assignRole(RoleEnum::ADMIN->value);
     }
   }
 }
