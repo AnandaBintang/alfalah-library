@@ -60,7 +60,7 @@ class UserResource extends Resource
               ->minLength(8)
               ->maxLength(255)
               ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
-              ->dehydrated(fn($state) => !is_null($state)),
+              ->dehydrated(fn($state) => filled($state)),
 
             Forms\Components\Select::make('role')
               ->label('Role')
@@ -93,10 +93,43 @@ class UserResource extends Resource
               ->label('Masa Berlaku Hingga')
               ->disabled()
               ->visible(fn(Forms\Get $get) => $get('role') === RoleEnum::SISWA->value)
-              ->helperText('Otomatis diset 3 tahun untuk siswa. Admin/Petugas tidak ada masa berlaku.'),
+              ->helperText('Otomatis diset 3 tahun untuk siswa.'),
+          ])
+          ->columns(2),
+
+        Forms\Components\Section::make('Profil Siswa')
+          ->relationship('profile') // langsung bind ke relasi hasOne profile
+          ->schema([
+            Forms\Components\TextInput::make('nis')
+              ->label('NIS')
+              ->maxLength(20),
+
+            Forms\Components\TextInput::make('nisn')
+              ->label('NISN')
+              ->maxLength(20),
+
+            Forms\Components\TextInput::make('class')
+              ->label('Kelas')
+              ->maxLength(50),
+
+            Forms\Components\TextInput::make('address')
+              ->label('Alamat')
+              ->maxLength(255),
+
+            Forms\Components\TextInput::make('phone')
+              ->label('No HP')
+              ->tel(),
+
+            Forms\Components\Select::make('gender')
+              ->label('Jenis Kelamin')
+              ->options([
+                'L' => 'Laki-laki',
+                'P' => 'Perempuan',
+              ]),
           ])
           ->columns(2),
       ]);
+
   }
 
   public static function table(Table $table): Table
@@ -945,7 +978,7 @@ class UserResource extends Resource
         'name' => $data['name'],
         'email' => $data['email'],
         'password' => Hash::make($data['password']),
-        'is_active' => false, // Start as inactive
+        'is_active' => 1, // Start as active
         'activated_at' => null,
         'expires_at' => null,
       ]);
@@ -967,7 +1000,7 @@ class UserResource extends Resource
 
       // Assign role
       if ($autoAssignRole) {
-        $role = 'petugas' ?? 'siswa';
+        $role = $autoAssignRole ? RoleEnum::SISWA->value : RoleEnum::PETUGAS->value;
         if (Role::where('name', $role)->exists()) {
           $user->assignRole($role);
         } else {
