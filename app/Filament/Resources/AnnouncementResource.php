@@ -31,12 +31,12 @@ class AnnouncementResource extends Resource
           ->maxLength(255),
         Forms\Components\Radio::make('is_published')
           ->options([
-            1 => 'True',
-            0 => 'False',
+            1 => 'Ya',
+            0 => 'Tidak',
           ])
           ->label('Publish')
           ->required(),
-        Forms\Components\DatePicker::make('published_at')
+        Forms\Components\DatePicker::make('Publish Tanggal')
           ->required()
           ->label('Publish Date'),
       ]);
