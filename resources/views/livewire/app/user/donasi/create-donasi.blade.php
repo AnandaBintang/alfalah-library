@@ -45,20 +45,11 @@
         </div>
 
         <!-- Upload Gambar -->
-        <div
-          x-data="{ uploading: false, progress: 0 }"
-          x-on:livewire-upload-start="uploading = true"
-          x-on:livewire-upload-finish="uploading = false"
-          x-on:livewire-upload-cancel="uploading = false"
-          x-on:livewire-upload-error="uploading = false"
-          x-on:livewire-upload-progress="progress = $event.detail.progress">
+        <div>
 
           <label class="block text-sm font-medium text-gray-700">Gambar (opsional)</label>
           <input wire:model="image" type="file" accept="image/*"
                  class="mt-1 block w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"/>
-          <div x-show="uploading">
-            <progress max="100" x-bind:value="progress"></progress>
-          </div>
           @error('image') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
           {{--          @if ($image)--}}
           {{--            <img src="{{ $image->temporaryUrl() }}">--}}
