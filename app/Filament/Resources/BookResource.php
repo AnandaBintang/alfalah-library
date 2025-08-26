@@ -95,8 +95,13 @@ class BookResource extends Resource
               ->label('ISBN')
               ->unique(ignoreRecord: true)
               ->maxLength(17),
+
+            TextInput::make('buku_edisi')
+              ->label('Buku Edisi'),
           ])
           ->columns(2),
+
+
 
         Section::make('Penulis & Penerbit')
           ->schema([
@@ -371,8 +376,7 @@ class BookResource extends Resource
       ])
       ->emptyStateActions([
         CreateAction::make(),
-      ])
-      ;
+      ]);
   }
 
   public static function getRelations(): array
@@ -393,9 +397,9 @@ class BookResource extends Resource
   public static function canViewAny(): bool
   {
     return Auth::check() && Auth::user()->hasAnyRole([
-      RoleEnum::ADMIN->value,
-      RoleEnum::PETUGAS->value
-    ]);
+        RoleEnum::ADMIN->value,
+        RoleEnum::PETUGAS->value
+      ]);
   }
 
   // Private helper methods
