@@ -1,6 +1,6 @@
 <div class="flex flex-col h-full bg-white border border-gray-200 shadow-2xs rounded-xl overflow-hidden cursor-pointer"
-     wire:click="goToDetailBook({{ $link }})">
-  <img class="bg-fixed rounded-t-xl" src="{{ asset('storage/' . $image) }}" alt="Card Image">
+     wire:click="goToDetailBook({{ $link }})" wire:ignore>
+  <img class="w-full h-48 object-cover mx-auto rounded-t-xl" src="{{ asset('storage/' . $image) }}" alt="Gambar Buku">
   <div class="p-4 md:p-5 flex flex-col flex-1">
     <h3 class="text-lg font-bold text-gray-800">
       {{ \Illuminate\Support\Str::limit($cardTitle, 20) ?? "-" }}
