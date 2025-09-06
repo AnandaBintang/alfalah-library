@@ -33,6 +33,7 @@ class BookSeeder extends Seeder
         'stock' => 2,
         'rack_location' => 2,
         'cover_image_path' => 'cover-books/cover-book-1.jpg',
+        'ebook_type' => 'pdf',
         'file_ebook_path' => 'ebooks/ebooks.pdf'
       ]);
   }

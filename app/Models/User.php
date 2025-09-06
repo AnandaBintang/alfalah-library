@@ -222,16 +222,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Can
 
   public function canAccessPanel(Panel $panel): bool
   {
-//    if ($this->hasRole([RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])) {
-//      return true;
-//    }
-//
-//    if ($this->is_expired) {
-//      $this->update(['is_active' => false]);
-//      return false;
-//    }
-//
-//    return $this->is_active;
+    //    if ($this->hasRole([RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])) {
+    //      return true;
+    //    }
+    //
+    //    if ($this->is_expired) {
+    //      $this->update(['is_active' => false]);
+    //      return false;
+    //    }
+    //
+    //    return $this->is_active;
 
     return true;
   }

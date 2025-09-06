@@ -26,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
   ->withExceptions(function (Exceptions $exceptions) {
     //
   })
+  ->withCommands([
+    \App\Console\Commands\GenerateImportTemplate::class,
+  ])
   ->withSchedule(function (Schedule $schedule) {
     $schedule->command('users:check-expired')
       ->daily()

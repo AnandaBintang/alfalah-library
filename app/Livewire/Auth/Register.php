@@ -41,6 +41,9 @@ class Register extends Component
         'name' => $this->name,
         'email' => $this->email,
         'password' => Hash::make($this->password),
+        'is_active' => 1,
+        'activated_at' => now(),
+        'expires_at' => now()->addYear(3),
       ]);
       $user->assignRole(RoleEnum::SISWA->value);
 

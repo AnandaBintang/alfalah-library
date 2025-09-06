@@ -24,9 +24,9 @@
         </div>
 
         <div class="p-6 sm:p-8 text-center text-black">
-                <h3 class="text-xl sm:text-2xl font-bold mt-4 mb-4">SMP ALFALAH ASSALAM</h3>
+                <h3 class="text-xl sm:text-2xl font-bold mt-4 mb-4">{{ config('app.name') }}</h3>
                 <p class="text-black leading-relaxed text-sm sm:text-base">
-                    <b>Gedung Perpustakaan SMP Alfalah Assalam Lantai 3</b><br>
+                    <b>Gedung Perpustakaan {{ config('app.name') }} Lantai 3</b><br>
                     <span class="block sm:inline">Jl. Raya Wisma Tropodo Blok FG-20, Tropodo, Waru,</span><br>
                     Sidoarjo, Jawa Timur 61256 Indonesia.
                 </p>

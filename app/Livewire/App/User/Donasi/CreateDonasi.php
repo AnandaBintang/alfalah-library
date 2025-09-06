@@ -32,20 +32,20 @@ class CreateDonasi extends Component
     'item_name' => 'required|string|max:255',
     'description' => 'nullable|string|max:1000',
     'quantity' => 'required|integer|min:1',
-    'image' => 'required|image|max:5120',
+    'image' => 'required|max:5120|mimes:jpeg,jpg,png',
   ];
 
   public function submit()
   {
+    $user = Auth::user();
     try {
       DB::beginTransaction();
       $this->validate();
-      $user = Auth::user();
 
       $imagePath = null;
       if ($this->image) {
-        $filename = Str::random(30) . '.' . $this->image->getClientOriginalExtension();
-
+        $filename = Str::random(40) . '.' . $this->image->getClientOriginalExtension();
+//
         $imagePath = Storage::disk('public')->putFileAs(
           'donations',
           $this->image,
@@ -76,10 +76,11 @@ class CreateDonasi extends Component
       DB::rollBack();
       LivewireAlert::title('Donasi Gagal!')
         ->error()
+        ->toast()
+        ->position('top-end')
         ->text($e->getMessage())
         ->timer(2000)
         ->show();
-      $user = Auth::user();
       $user->notify(new StatusNotification('error', "Donasi gagal diajukan."));
 
     }

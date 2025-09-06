@@ -95,8 +95,13 @@ class BookResource extends Resource
               ->label('ISBN')
               ->unique(ignoreRecord: true)
               ->maxLength(17),
+
+            TextInput::make('buku_edisi')
+              ->label('Buku Edisi'),
           ])
           ->columns(2),
+
+
 
         Section::make('Penulis & Penerbit')
           ->schema([
@@ -125,6 +130,7 @@ class BookResource extends Resource
 
             TextInput::make('rack_location')
               ->label('Lokasi Rak')
+              ->integer()
               ->maxLength(50),
 
             Toggle::make('is_student_work')
@@ -191,6 +197,7 @@ class BookResource extends Resource
 
             TextInput::make('catalog_code')
               ->label('Kode Katalog')
+              ->integer()
               ->maxLength(50),
 
             TextInput::make('subject')
@@ -221,7 +228,7 @@ class BookResource extends Resource
               ->imagePreviewHeight('200')
               ->downloadable()
               ->maxSize(2048)
-              ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+              ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
               ->columnSpanFull(),
           ]),
       ]);
@@ -232,9 +239,7 @@ class BookResource extends Resource
     return $table
       ->columns([
         ImageColumn::make('cover_image_path')
-          ->label('Cover')
-          ->circular()
-          ->size(50),
+          ->label('Cover'),
 
         TextColumn::make('title')
           ->label('Judul Buku')
@@ -394,9 +399,9 @@ class BookResource extends Resource
   public static function canViewAny(): bool
   {
     return Auth::check() && Auth::user()->hasAnyRole([
-      RoleEnum::ADMIN->value,
-      RoleEnum::PETUGAS->value
-    ]);
+        RoleEnum::ADMIN->value,
+        RoleEnum::PETUGAS->value
+      ]);
   }
 
   // Private helper methods

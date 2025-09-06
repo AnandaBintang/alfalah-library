@@ -30,6 +30,11 @@
     </div>
 
     <div>
+      <label class="block font-medium">Email</label>
+      <input wire:model.defer="email" type="text" class="w-full border rounded p-2" readonly>
+    </div>
+
+    <div>
       <label class="block font-medium">NIS</label>
       <input wire:model.defer="nis" type="text" class="w-full border rounded p-2">
     </div>

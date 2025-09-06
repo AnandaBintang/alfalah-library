@@ -227,7 +227,7 @@
   {{--    Footer --}}
   <footer class="w-full mt-10">
     <div class="p-5 bg-blue-600 text-sm flex justify-center text-white font-semibold">
-      <p>© {{ date('Y') }} SMP Alfalah Assalam. All rights reserved.</p>
+      <p>© {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
     </div>
   </footer>
   {{--    Footer --}}

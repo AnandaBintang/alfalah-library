@@ -63,6 +63,7 @@ class Book extends Component
     $query = ModelBook::query()->with('categories');
 
     if ($this->search) {
+      $this->resetPage();
       $query->where('title', 'like', '%' . $this->search . '%');
     }
 
@@ -71,12 +72,12 @@ class Book extends Component
     }
 
     if ($this->bookType === 'ebook') {
-      $query->where('is_ebook', true);
+      $query->where('is_ebook', 1);
     } elseif ($this->bookType === 'pear') {
-      $query->where('is_ebook', false);
+      $query->where('is_ebook', 0);
     }
 
-    $datas = $query->paginate(15);
+    $datas = $query->cursorPaginate(15);
     $categories = Category::orderBy('name')->get();
 
     // Ambil top 10 book_id yang paling sering dipinjam (untuk keperluan filter)
@@ -91,12 +92,8 @@ class Book extends Component
     // Ambil hanya 3 top books sesuai filter aktif
     $topBooks = ModelBook::query()
       ->whereIn('id', $topLoanedIds)
-      ->when($this->search, fn($q) => $q->where('title', 'like', '%' . $this->search . '%')
-      )
-      ->when($this->category, fn($q) => $q->whereHas('categories', fn($q2) => $q2->where('id', $this->category))
-      )
-      ->when($this->bookType === 'ebook', fn($q) => $q->where('is_ebook', true))
-      ->when($this->bookType === 'pear', fn($q) => $q->where('is_ebook', false))
+      ->when($this->bookType === 'ebook', fn($q) => $q->where('is_ebook', 1))
+      ->when($this->bookType === 'pear', fn($q) => $q->where('is_ebook', 0))
       ->with('categories')
       ->take(3)
       ->get();

@@ -27,7 +27,7 @@
                     Rp{{ number_format($fine->amount, 0, ',', '.') }}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    {{ \Carbon\Carbon::parse($fine->loan->loan_date)->format('d M Y') ?? '-' }}
+                    {{ \Carbon\Carbon::parse($fine->created_at)->format('d M Y') ?? '-' }}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm">
                     @if ($fine->status === 'paid')

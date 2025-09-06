@@ -93,31 +93,34 @@
   @endif
 
   {{--  List Buku--}}
-  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
-    @if($datas->count() == 0)
-      <div class="col-span-6 text-center text-gray-500 whitespace-pre-line p-10">
-        Tidak ada buku yang ditemukan.<br>
-        Silakan coba kata kunci lain atau pilih kategori berbeda.
-      </div>
-    @endif
+  <div class="mb-3">
+    <h3 class="text-xl font-semibold mb-4">📚 List Buku</h3>
 
-    @foreach($datas as $data)
-      <livewire:components.card-product
-        :key="$data->id"
-        :cardTitle="$data->title"
-        :description="$data->subtitle"
-        :image="$data->cover_image_path"
-        :link="$data->id"
-        wire:key="card-{{ $data->id }}"
-      />
-    @endforeach
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      @if($datas->count() == 0)
+        <div class="col-span-6 text-center text-gray-500 whitespace-pre-line p-10">
+          Tidak ada buku yang ditemukan.<br>
+          Silakan coba kata kunci lain atau pilih kategori berbeda.
+        </div>
+      @endif
+
+      @foreach($datas as $data)
+        <livewire:components.card-product
+          :cardTitle="$data->title"
+          :description="$data->subtitle"
+          :image="$data->cover_image_path"
+          :link="$data->id"
+          wire:key="card-{{ $data->id }}"
+        />
+      @endforeach
+    </div>
   </div>
 
   {{--  List Buku--}}
 
   {{--  Pagination button--}}
   <div class="mt-7 flex justify-center">
-    {{ $datas->links("vendor.livewire.custom-pagination") }}
+    {{ $datas->links() }}
   </div>
   {{--  Pagination button--}}
 

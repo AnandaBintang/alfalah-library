@@ -3,14 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Enum\RoleEnum;
+use App\Filament\Imports\UserWithProfileImporter;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use App\Models\Profile;
 use Filament\Forms;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -20,9 +17,12 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class UserResource extends Resource
 {
@@ -60,7 +60,7 @@ class UserResource extends Resource
               ->minLength(8)
               ->maxLength(255)
               ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
-              ->dehydrated(fn($state) => !is_null($state)),
+              ->dehydrated(fn($state) => filled($state)),
 
             Forms\Components\Select::make('role')
               ->label('Role')
@@ -93,10 +93,43 @@ class UserResource extends Resource
               ->label('Masa Berlaku Hingga')
               ->disabled()
               ->visible(fn(Forms\Get $get) => $get('role') === RoleEnum::SISWA->value)
-              ->helperText('Otomatis diset 3 tahun untuk siswa. Admin/Petugas tidak ada masa berlaku.'),
+              ->helperText('Otomatis diset 3 tahun untuk siswa.'),
+          ])
+          ->columns(2),
+
+        Forms\Components\Section::make('Profil Siswa')
+          ->relationship('profile') // langsung bind ke relasi hasOne profile
+          ->schema([
+            Forms\Components\TextInput::make('nis')
+              ->label('NIS')
+              ->maxLength(20),
+
+            Forms\Components\TextInput::make('nisn')
+              ->label('NISN')
+              ->maxLength(20),
+
+            Forms\Components\TextInput::make('class')
+              ->label('Kelas')
+              ->maxLength(50),
+
+            Forms\Components\TextInput::make('address')
+              ->label('Alamat')
+              ->maxLength(255),
+
+            Forms\Components\TextInput::make('phone')
+              ->label('No HP')
+              ->tel(),
+
+            Forms\Components\Select::make('gender')
+              ->label('Jenis Kelamin')
+              ->options([
+                'L' => 'Laki-laki',
+                'P' => 'Perempuan',
+              ]),
           ])
           ->columns(2),
       ]);
+
   }
 
   public static function table(Table $table): Table
@@ -125,7 +158,9 @@ class UserResource extends Resource
       ->filters(static::getTableFilters())
       ->headerActions(static::getTableHeaderActions())
       ->actions(static::getTableActions())
-      ->bulkActions(static::getTableBulkActions());
+      ->bulkActions(static::getTableBulkActions())
+      ->defaultSort('role_name', 'asc')
+      ->defaultSort('id', 'desc');
   }
 
   protected static function getTableColumns(): array
@@ -175,12 +210,113 @@ class UserResource extends Resource
         ->boolean()
         ->sortable()
         ->visible(static::shouldShowActiveColumn(...)),
+      Tables\Columns\TextColumn::make('created_at')
+        ->label('Dibuat Pada')
+        ->getStateUsing(function ($record) {
+          if (!$record || !$record->created_at) {
+            return '-';
+          }
+          return $record->created_at->format('d M Y');
+        })
+        ->sortable()
+        ->toggleable(isToggledHiddenByDefault: true),
     ];
   }
 
   protected static function getTableHeaderActions(): array
   {
     return [
+      // Import Action - Fixed
+      Tables\Actions\Action::make('import_users')
+        ->label('Import User & Profile')
+        ->icon('heroicon-o-arrow-up-tray')
+        ->color('success')
+        ->form([
+          Forms\Components\FileUpload::make('file')
+            ->label('Upload File')
+            ->acceptedFileTypes(['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'])
+            ->required()
+            ->helperText('Format yang didukung: Excel (.xlsx, .xls) dan CSV (.csv)')
+            ->disk('public')
+            ->directory('imports')
+            ->storeFileNamesIn('original_filename'),
+
+          Forms\Components\Toggle::make('auto_assign_role')
+            ->label('Auto Assign Role Siswa')
+            ->default(true)
+            ->helperText('Semua user yang diimport akan otomatis diberi role siswa.'),
+        ])
+        ->action(function (array $data) {
+          try {
+            // Handle both relative path (public disk) and absolute path
+            if (str_starts_with($data['file'], 'imports/')) {
+              $filePath = public_path('storage/' . $data['file']);
+            } else {
+              $filePath = storage_path('app/public/' . $data['file']);
+            }
+
+            if (!file_exists($filePath)) {
+              throw new \Exception('File tidak ditemukan di: ' . $filePath);
+            }
+
+            // Process file based on extension
+            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+
+            if (in_array($extension, ['xlsx', 'xls'])) {
+              $results = static::processExcelFile($filePath, $data['auto_assign_role']);
+            } elseif ($extension === 'csv') {
+              $results = static::processCsvFile($filePath, $data['auto_assign_role']);
+            } else {
+              throw new \Exception('Format file tidak didukung.');
+            }
+
+            // Clean up
+            unlink($filePath);
+
+            Notification::make()
+              ->title('Import Berhasil')
+              ->body("{$results['success']} user berhasil diimport. {$results['failed']} gagal.")
+              ->success()
+              ->send();
+          } catch (\Exception $e) {
+            Notification::make()
+              ->title('Import Gagal')
+              ->body('Error: ' . $e->getMessage())
+              ->danger()
+              ->send();
+          }
+        }),
+
+      Tables\Actions\ActionGroup::make([
+        Tables\Actions\Action::make('download_excel')
+          ->label('📊 Excel Template')
+          ->icon('heroicon-o-document-text')
+          ->color('success')
+          ->button()
+          ->action(function () {
+            return response()->download(
+              storage_path('app/templates/user_import_template.xlsx'),
+              'Template_Import_User_Excel.xlsx'
+            );
+          }),
+
+        Tables\Actions\Action::make('download_csv')
+          ->label('📋 CSV Template')
+          ->icon('heroicon-o-document')
+          ->color('info')
+          ->button()
+          ->action(function () {
+            return response()->download(
+              storage_path('app/templates/user_import_template.csv'),
+              'Template_Import_User_CSV.csv'
+            );
+          }),
+      ])
+        ->label('Download Template')
+        ->icon('heroicon-o-document-arrow-down')
+        ->color('info')
+        ->button(),
+
       ExportAction::make()
         ->label('Export Semua User'),
 
@@ -290,6 +426,8 @@ class UserResource extends Resource
             ->send();
         }),
 
+
+
       Tables\Actions\DeleteAction::make(),
     ];
   }
@@ -355,6 +493,85 @@ class UserResource extends Resource
         ->form(fn($records) => static::getSmartActionForm($records))
         ->action(function ($records, array $data) {
           return static::executeSmartAction($records, $data);
+        }),
+
+      Tables\Actions\BulkAction::make('assign_role')
+        ->label('Berikan Role')
+        ->icon('heroicon-o-user-plus')
+        ->color('warning')
+        ->requiresConfirmation()
+        ->modalHeading('Berikan Role ke User Terpilih')
+        ->modalDescription('Pilih role yang akan diberikan ke semua user yang dipilih.')
+        ->form([
+          Forms\Components\Select::make('role')
+            ->label('Role')
+            ->options(Role::pluck('name', 'name')->toArray())
+            ->required()
+            ->default(RoleEnum::SISWA->value)
+            ->helperText('Role yang dipilih akan diberikan ke semua user yang dipilih.'),
+
+          Forms\Components\Toggle::make('activate_students')
+            ->label('Aktivasi Otomatis untuk Siswa')
+            ->default(true)
+            ->helperText('Jika role yang dipilih adalah siswa, user akan otomatis diaktivasi.')
+            ->visible(fn(Forms\Get $get) => $get('role') === RoleEnum::SISWA->value),
+
+          Forms\Components\Select::make('years')
+            ->label('Masa Berlaku (untuk Siswa)')
+            ->options([
+              1 => '1 Tahun',
+              2 => '2 Tahun',
+              3 => '3 Tahun',
+            ])
+            ->default(3)
+            ->visible(fn(Forms\Get $get) => $get('role') === RoleEnum::SISWA->value)
+            ->required(fn(Forms\Get $get) => $get('role') === RoleEnum::SISWA->value),
+        ])
+        ->action(function ($records, array $data) {
+          $assignedCount = 0;
+          $activatedCount = 0;
+
+          foreach ($records as $record) {
+            if (!$record) continue;
+
+            try {
+              // Assign role
+              $record->syncRoles([$data['role']]);
+              $assignedCount++;
+
+              if ($data['role'] === RoleEnum::SISWA->value && ($data['activate_students'] ?? false)) {
+                $record->update([
+                  'is_active' => true,
+                  'activated_at' => now(),
+                  'expires_at' => now()->addYears($data['years']),
+                ]);
+                $activatedCount++;
+              }
+
+              // Automatically activate admin/petugas
+              if (in_array($data['role'], [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])) {
+                $record->update([
+                  'is_active' => true,
+                  'activated_at' => now(),
+                  'expires_at' => null,
+                ]);
+                $activatedCount++;
+              }
+            } catch (\Exception $e) {
+              continue;
+            }
+          }
+
+          $message = "$assignedCount user berhasil diberi role '{$data['role']}'.";
+          if ($activatedCount > 0) {
+            $message .= " $activatedCount user telah diaktivasi.";
+          }
+
+          Notification::make()
+            ->title('Assign Role Berhasil')
+            ->body($message)
+            ->success()
+            ->send();
         }),
 
       Tables\Actions\BulkActionGroup::make([
@@ -652,16 +869,151 @@ class UserResource extends Resource
     foreach ($selectedRecords as $record) {
       if (!$record) continue;
 
-      try {
-        if (!$record->isStudent() || $record->is_active) {
-          return false;
-        }
-      } catch (\Exception $e) {
-        return false;
+      // Check if user has siswa role AND is not active
+      if ($record->hasRole(RoleEnum::SISWA->value) && !$record->is_active) {
+        return true;
       }
     }
 
-    return true;
+    return false;
+  }
+
+  protected static function processExcelFile($filePath, $autoAssignRole = true): array
+  {
+    $reader = IOFactory::createReader('Xlsx');
+    $spreadsheet = $reader->load($filePath);
+    $worksheet = $spreadsheet->getActiveSheet();
+    $rows = $worksheet->toArray();
+
+    // Remove header row
+    array_shift($rows);
+
+    $success = 0;
+    $failed = 0;
+
+    foreach ($rows as $row) {
+      if (empty(array_filter($row))) continue; // Skip empty rows
+
+      try {
+        $userData = [
+          'name' => $row[0] ?? '',
+          'email' => $row[1] ?? '',
+          'password' => $row[2] ?? 'password',
+          'nis' => $row[3] ?? '',
+          'nisn' => $row[4] ?? '',
+          'class' => $row[5] ?? '',
+          'gender' => $row[6] ?? '',
+          'address' => $row[7] ?? '',
+          'phone' => $row[8] ?? '',
+        ];
+
+        if (static::createUserWithProfile($userData, $autoAssignRole)) {
+          $success++;
+        } else {
+          $failed++;
+        }
+      } catch (\Exception $e) {
+        $failed++;
+      }
+    }
+
+    return ['success' => $success, 'failed' => $failed];
+  }
+
+  protected static function processCsvFile($filePath, $autoAssignRole = true): array
+  {
+    $handle = fopen($filePath, 'r');
+    $header = fgetcsv($handle); // Skip header
+
+    $success = 0;
+    $failed = 0;
+
+    while (($row = fgetcsv($handle)) !== false) {
+      if (empty(array_filter($row))) continue; // Skip empty rows
+
+      try {
+        $userData = [
+          'name' => $row[0] ?? '',
+          'email' => $row[1] ?? '',
+          'password' => $row[2] ?? 'password',
+          'nis' => $row[3] ?? '',
+          'nisn' => $row[4] ?? '',
+          'class' => $row[5] ?? '',
+          'gender' => $row[6] ?? '',
+          'address' => $row[7] ?? '',
+          'phone' => $row[8] ?? '',
+        ];
+
+        if (static::createUserWithProfile($userData, $autoAssignRole)) {
+          $success++;
+        } else {
+          $failed++;
+        }
+      } catch (\Exception $e) {
+        $failed++;
+      }
+    }
+
+    fclose($handle);
+    return ['success' => $success, 'failed' => $failed];
+  }
+
+  protected static function createUserWithProfile($data, $autoAssignRole = true): bool
+  {
+    try {
+      // Validate required fields
+      if (empty($data['name']) || empty($data['email'])) {
+        return false;
+      }
+
+      // Check if user already exists
+      if (User::where('email', $data['email'])->exists()) {
+        return false;
+      }
+
+      DB::beginTransaction();
+
+      // Create user
+      $user = User::create([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+        'is_active' => 1, // Start as active
+        'activated_at' => null,
+        'expires_at' => null,
+      ]);
+
+      // Create profile if data exists
+      if (!empty($data['phone']) || !empty($data['address']) || !empty($data['class'])) {
+        $profileData = [
+          'user_id' => $user->id,
+          'nis' => $data['nis'] ?? null,
+          'nisn' => $data['nisn'] ?? null,
+          'class' => $data['class'] ?? null,
+          'gender' => $data['gender'] ?? null,
+          'address' => $data['address'] ?? null,
+          'phone' => $data['phone'] ?? null,
+        ];
+
+        Profile::create($profileData);
+      }
+
+      // Assign role
+      if ($autoAssignRole) {
+        $role = $autoAssignRole ? RoleEnum::SISWA->value : RoleEnum::PETUGAS->value;
+        if (Role::where('name', $role)->exists()) {
+          $user->assignRole($role);
+        } else {
+          $user->assignRole('siswa'); // Default role
+        }
+      }
+
+      DB::commit();
+      return true;
+    } catch (\Exception $e) {
+      DB::rollback();
+      return false;
+    }
   }
 
   protected static function shouldShowBulkExtend($livewire): bool
@@ -676,14 +1028,14 @@ class UserResource extends Resource
       if (!$record) continue;
 
       try {
-        if (!$record->isStudent() || !$record->is_active) {
-          return false;
+        if ($record->hasRole(RoleEnum::SISWA->value) && $record->is_active) {
+          return true;
         }
       } catch (\Exception $e) {
-        return false;
+        continue;
       }
     }
 
-    return true;
+    return false;
   }
 }

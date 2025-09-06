@@ -9,6 +9,7 @@ use App\Filament\Resources\ReturnedResource\Widgets\ReturnedChart;
 use App\Filament\Resources\VisitResource\Widgets\VisitChart;
 use App\Filament\Widgets\TopVisitors;
 use App\Filament\Widgets\UserStats;
+use App\Http\Middleware\CheckActiveUser;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -38,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
       ->path('admin')
       ->login()
       ->passwordReset()
-      ->emailVerification()
+      // ->emailVerification()
       ->spa()
       ->favicon(asset('logo/logo-alfalah.png'))
       ->colors([
@@ -77,6 +78,7 @@ class AdminPanelProvider extends PanelProvider
       ])
       ->authMiddleware([
         Authenticate::class,
+        CheckActiveUser::class,
         EnsureUserHasAdminRole::class,
       ]);
   }
