@@ -130,6 +130,7 @@ class BookResource extends Resource
 
             TextInput::make('rack_location')
               ->label('Lokasi Rak')
+              ->integer()
               ->maxLength(50),
 
             Toggle::make('is_student_work')
@@ -196,6 +197,7 @@ class BookResource extends Resource
 
             TextInput::make('catalog_code')
               ->label('Kode Katalog')
+              ->integer()
               ->maxLength(50),
 
             TextInput::make('subject')
@@ -226,7 +228,7 @@ class BookResource extends Resource
               ->imagePreviewHeight('200')
               ->downloadable()
               ->maxSize(2048)
-              ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+              ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
               ->columnSpanFull(),
           ]),
       ]);
