@@ -87,7 +87,7 @@ class UserSeeder extends Seeder
         [
           'name' => 'Admin Perpustakaan SMP Alfalah',
           'password' => Hash::make('password'),
-          'is_active' => true,
+          'is_active' => 1,
           'activated_at' => now(),
           'expires_at' => now()->addYear(3),
         ]
