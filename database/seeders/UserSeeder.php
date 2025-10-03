@@ -26,6 +26,7 @@ class UserSeeder extends Seeder
           'name' => 'siswa',
           'is_active' => true,
           'activated_at' => now(),
+          'email_verified_at' => now(),
           'expires_at' => now()->addYear(3),
           'password' => Hash::make('password'),
         ]
@@ -40,6 +41,7 @@ class UserSeeder extends Seeder
           'password' => Hash::make('password'),
           'is_active' => true,
           'activated_at' => now(),
+          'email_verified_at' => now(),
           'expires_at' => now()->addYear(3),
         ]
       );
@@ -52,6 +54,7 @@ class UserSeeder extends Seeder
           'name' => 'admin',
           'password' => Hash::make('password'),
           'is_active' => true,
+          'email_verified_at' => now(),
           'activated_at' => now(),
           'expires_at' => now()->addYear(3),
         ]
@@ -64,6 +67,7 @@ class UserSeeder extends Seeder
         [
           'name' => 'Admin Perpustakaan SMP Alfalah',
           'password' => Hash::make('password'),
+          'email_verified_at' => now(),
           'is_active' => true,
           'activated_at' => now(),
           'expires_at' => now()->addYear(3),
@@ -87,6 +91,7 @@ class UserSeeder extends Seeder
         [
           'name' => 'Admin Perpustakaan SMP Alfalah',
           'password' => Hash::make('password'),
+          'email_verified_at' => now(),
           'is_active' => 1,
           'activated_at' => now(),
           'expires_at' => now()->addYear(3),

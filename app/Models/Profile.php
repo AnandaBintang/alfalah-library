@@ -19,6 +19,7 @@ class Profile extends Model
     'phone',
     'gender',
     'library_card_image_path',
+    'user_code',
   ];
 
   public function user()
