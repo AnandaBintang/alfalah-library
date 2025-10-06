@@ -9,7 +9,7 @@
   @endif
 
   @if (!Auth::user()->hasVerifiedEmail())
-    <div class="p-3 mb-4 bg-yellow-100 text-yellow-800 border border-yellow-400 rounded">
+    <div class="p-3 mb-4 bg-yellow-100 text-yellow-800 border border-yellow-400 rounded w-fit">
       Email Anda belum diverifikasi.
       <button
         wire:click="sendVerificationEmail"
@@ -19,6 +19,18 @@
       </button>
     </div>
   @endif
+
+  {{-- Total Kunjungan Satu Tahun --}}
+  <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl w-fit">
+    <div class="p-4 md:p-5">
+      <h3 class="text-lg font-bold text-gray-800">
+        Total Kunjungan Satu Tahun
+      </h3>
+      <p class="mt-1 ">
+        {{ $totalKunjunganSatuTahun }}
+      </p>
+    </div>
+  </div>
 
   {{-- Profile Form --}}
   <form wire:submit.prevent="updateProfile" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
@@ -76,7 +88,9 @@
               data-hs-overlay="#hs-scale-animation-modal">
         Ganti Password
       </button>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700">Simpan Profil</button>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700">Simpan
+        Profil
+      </button>
     </div>
   </form>
 

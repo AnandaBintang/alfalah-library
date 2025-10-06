@@ -60,6 +60,8 @@
       <!-- Tombol Submit -->
       <div class="text-right">
         <button
+          wire:loading.attr="disabled"
+          wire:target="submit, image"
           type="submit"
           class="w-full sm:w-auto inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
 

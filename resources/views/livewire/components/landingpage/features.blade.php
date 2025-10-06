@@ -1,5 +1,5 @@
 
-<section class="py-12 sm:py-16 lg:py-20 bg-gray-50">
+<section class="py-12 sm:py-16 lg:py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <div id="fitur" class="text-lg sm:text-xl text-blue-600 py-6 font-bold">FITUR</div>
         <div class="mb-12 sm:mb-16">

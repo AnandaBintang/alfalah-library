@@ -2,6 +2,7 @@
 
 namespace App\Livewire\App\User\Profile;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,7 @@ class Profile extends Component
 {
   use WithFileUploads;
 
-  public $name, $email, $nis, $nisn, $class, $address, $phone;
+  public $name, $email, $nis, $nisn, $class, $address, $phone, $totalKunjunganSatuTahun;
   public $library_card_image, $old_image;
 
   public $current_password, $new_password, $new_password_confirmation;
@@ -28,8 +29,13 @@ class Profile extends Component
   public function mount()
   {
     $user = auth()->user();
-    $this->name = $user->name;
 
+    $now = Carbon::now();
+
+    $awalTahun = $now->startOfYear();
+    $akhirTahun = $now->endOfYear();
+
+    $this->name = $user->name;
     $this->nis = $user->profile->nis ?? '';
     $this->nisn = $user->profile->nisn ?? '';
     $this->class = $user->profile->class ?? '';
@@ -37,6 +43,7 @@ class Profile extends Component
     $this->phone = $user->profile->phone ?? '';
     $this->old_image = $user->profile->library_card_image_path ?? null;
     $this->email = $user->email ?? '';
+    $this->totalKunjunganSatuTahun = $user->absensi()->whereBetween('created_at', [$awalTahun, $akhirTahun])->count() ?? 0;
   }
 
   public function sendVerificationEmail()
