@@ -5,6 +5,7 @@ namespace App\Livewire\App\User\Profile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
@@ -30,11 +31,6 @@ class Profile extends Component
   {
     $user = auth()->user();
 
-    $now = Carbon::now();
-
-    $awalTahun = $now->startOfYear();
-    $akhirTahun = $now->endOfYear();
-
     $this->name = $user->name;
     $this->nis = $user->profile->nis ?? '';
     $this->nisn = $user->profile->nisn ?? '';
@@ -43,7 +39,7 @@ class Profile extends Component
     $this->phone = $user->profile->phone ?? '';
     $this->old_image = $user->profile->library_card_image_path ?? null;
     $this->email = $user->email ?? '';
-    $this->totalKunjunganSatuTahun = $user->absensi()->whereBetween('created_at', [$awalTahun, $akhirTahun])->count() ?? 0;
+    $this->totalKunjunganSatuTahun = $user->absensi()->whereYear('created_at', Carbon::now()->year)->count();
   }
 
   public function sendVerificationEmail()
