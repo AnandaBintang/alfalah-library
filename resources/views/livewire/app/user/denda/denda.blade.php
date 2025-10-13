@@ -21,7 +21,7 @@
               @forelse ($fines as $fine)
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    {{ $fine->loan->book->title ?? '-' }}
+                    {{ $fine->loan?->book?->title ?? $fine->book?->title ?? '-' }}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                     Rp{{ number_format($fine->amount, 0, ',', '.') }}
