@@ -34,12 +34,26 @@ class DendaResource extends Resource
           ->required(),
 
         Forms\Components\Select::make('loan_id')
-          ->relationship(
-            name: 'loan',
-            titleAttribute: 'id'
-          )
+          ->relationship('loan', 'id')
           ->getOptionLabelFromRecordUsing(fn($record) => $record->book->title ?? 'Tidak ada buku')
-          ->searchable(),
+          ->preload()
+          ->searchable()
+          ->label('Peminjaman')
+          ->getSearchResultsUsing(function (string $search) {
+            return \App\Models\Loan::query()
+              ->whereHas('book', function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%");
+              })
+              ->limit(50)
+              ->get()
+              ->pluck('book.title', 'id');
+          }),
+
+        Forms\Components\Select::make('book_id')
+          ->relationship('book', 'title')
+          ->preload()
+          ->searchable()
+          ->label('Buku'),
 
 
         Forms\Components\TextInput::make('amount')
