@@ -90,6 +90,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Can
     return $this->hasMany(Announcement::class);
   }
 
+  public function absensi(): HasMany
+  {
+    return $this->hasMany(Absensi::class);
+  }
+
   public function cart(): HasMany
   {
     return $this->hasMany(Cart::class);

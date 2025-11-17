@@ -17,9 +17,7 @@ class TopVisitors extends Widget
       ->whereHas('roles', function ($query) {
         $query->where('name', 'siswa');
       })
-      ->withCount(['visitLogs as visits_count' => function ($query) {
-        $query->whereNull('deleted_at');
-      }])
+      ->withCount('absensi as visits_count')
       ->orderByDesc('visits_count')
       ->limit(5)
       ->get();

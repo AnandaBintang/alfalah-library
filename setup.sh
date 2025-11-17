@@ -24,6 +24,8 @@ if [ -d "public/build" ]; then
     rm -rf public/build
 fi
 
+rm -rf composer.lock package-lock.json
+
 # 1. Install Composer dependencies
 echo "Installing Composer dependencies..."
 composer install
@@ -54,9 +56,6 @@ php artisan optimize:clear
 #php artisan make:queue-batches-table
 #php artisan make:notifications-table
 
-# 6. Create storage symlink
-echo "Creating storage symlink..."
-php artisan storage:link
 
 # 7. Environment setup
 echo "Setting up environment..."
@@ -77,6 +76,11 @@ else
     php artisan migrate:fresh
     php artisan db:seed
 fi
+
+# 6. Create storage symlink
+echo "Creating storage symlink..."
+php artisan storage:link
+
 
 echo "=============================="
 echo "Setup completed for $ENV environment!"

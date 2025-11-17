@@ -54,6 +54,11 @@ class Book extends Model
     return $this->belongsToMany(Category::class);
   }
 
+  public function fine(): HasMany
+  {
+    return $this->hasMany(Fine::class);
+  }
+
   public function files()
   {
     return $this->hasMany(BookFile::class);

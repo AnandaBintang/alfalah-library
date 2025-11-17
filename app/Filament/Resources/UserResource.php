@@ -83,8 +83,7 @@ class UserResource extends Resource
               ->default(false)
               ->disabled(fn(Forms\Get $get) => in_array($get('role'), [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value]))
               ->helperText(
-                fn(Forms\Get $get) =>
-                in_array($get('role'), [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])
+                fn(Forms\Get $get) => in_array($get('role'), [RoleEnum::ADMIN->value, RoleEnum::PETUGAS->value])
                   ? 'Admin dan Petugas tidak perlu aktivasi manual.'
                   : 'Siswa perlu aktivasi manual. Masa berlaku 3 tahun sejak aktivasi.'
               ),
@@ -100,6 +99,10 @@ class UserResource extends Resource
         Forms\Components\Section::make('Profil Siswa')
           ->relationship('profile') // langsung bind ke relasi hasOne profile
           ->schema([
+            Forms\Components\TextInput::make('user_code')
+              ->label('Kode User')
+              ->required(),
+
             Forms\Components\TextInput::make('nis')
               ->label('NIS')
               ->maxLength(20),
@@ -425,7 +428,6 @@ class UserResource extends Resource
             ->success()
             ->send();
         }),
-
 
 
       Tables\Actions\DeleteAction::make(),

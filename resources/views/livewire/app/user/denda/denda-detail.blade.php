@@ -5,22 +5,24 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
       <div>
         <span class="font-medium">Judul Buku:</span>
-        <p>{{ $fines->loan->book->title ?? '-' }}</p>
+        {{-- Gunakan ?-> untuk keamanan berantai --}}
+        <p> {{ $fines->loan?->book?->title ?? $fines->book?->title ?? '-' }}</p>
       </div>
 
       <div>
         <span class="font-medium">Tanggal Pinjam:</span>
-        <p>{{ \Carbon\Carbon::parse($fines->loan->loan_date)->format('d M Y') ?? '-' }}</p>
+        {{-- Tambahkan ?-> setelah loan --}}
+        <p>{{ $fines->loan?->loan_date ? \Carbon\Carbon::parse($fines->loan->loan_date)->format('d M Y') : '-' }}</p>
       </div>
 
       <div>
         <span class="font-medium">Tanggal Jatuh Tempo:</span>
-        <p>{{ \Carbon\Carbon::parse($fines->loan->due_date)->format('d M Y') ?? '-' }}</p>
+        <p>{{ $fines->loan?->due_date ? \Carbon\Carbon::parse($fines->loan->due_date)->format('d M Y') : '-' }}</p>
       </div>
 
       <div>
         <span class="font-medium">Tanggal Kembali:</span>
-        <p>{{ $fines->loan->return_date ? \Carbon\Carbon::parse($fines->loan->return_date)->format('d M Y') : '-' }}</p>
+        <p>{{ $fines->loan?->return_date ? \Carbon\Carbon::parse($fines->loan->return_date)->format('d M Y') : '-' }}</p>
       </div>
 
       <div>
@@ -61,7 +63,7 @@
     </div>
 
     <div class="mt-6">
-      <a href="{{ route('denda.index') }}"
+      <a href="{{ route('denda.index') }}" wire:navigate
          class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-gray-800 text-white text-sm font-medium rounded-lg">
         Kembali ke Daftar Denda
       </a>

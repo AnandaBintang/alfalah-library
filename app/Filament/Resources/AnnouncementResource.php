@@ -36,9 +36,9 @@ class AnnouncementResource extends Resource
           ])
           ->label('Publish')
           ->required(),
-        Forms\Components\DatePicker::make('Publish Tanggal')
+        Forms\Components\DatePicker::make('published_at')
           ->required()
-          ->label('Publish Date'),
+          ->label('Tanggal Publish'),
       ]);
   }
 

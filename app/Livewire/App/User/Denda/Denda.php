@@ -18,15 +18,13 @@ class Denda extends Component
         $user = Auth::user();
 
         $this->fines = $user->fines()
-            ->with(['loan.book', 'loan'])
+            ->with(['book', 'loan'])
             ->get();
     }
 
     public function render()
     {
         $this->loadData();
-
-        \Log::info("Denda user " . $this->fines);
 
         return view('livewire.app.user.denda.denda', [
             'fines' => $this->fines,

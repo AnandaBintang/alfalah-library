@@ -21,6 +21,7 @@
         "phpoffice/phpspreadsheet": "^1.30",
         "picqer/php-barcode-generator": "^3.2",
         "pxlrbt/filament-excel": "^2.4",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.19"
     },
     "require-dev": {
