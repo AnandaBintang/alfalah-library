@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => isScanning = true, 3000);
   }
 
-  function onScanFailure(error) {}
+  function onScanFailure(error) {
+    window.Livewire.dispatch('qrErrorScanned', {message: error.message});
+  }
 
   const scanner = new Html5QrcodeScanner(
     "reader",

@@ -63,6 +63,17 @@ class ResponsiScanner extends Component
 
   }
 
+  #[On('qrErrorScanned')]
+  public function errorWhenScan($message) {
+    LivewireAlert::title('Error')
+      ->text($message)
+      ->error()
+      ->timer(10000)
+      ->withConfirmButton()
+      ->show();
+    return;
+  }
+
   public function render()
   {
     return view('livewire.admin.responsi-scanner');
