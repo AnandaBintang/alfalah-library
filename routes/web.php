@@ -27,7 +27,11 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\RequestResetPassword;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Auth\VerifyNotice;
+use App\Livewire\Admin\ResponsiScanner;
 
+
+// Scanner page
+Route::get('/responsi', ResponsiScanner::class)->name('responsi.scanner');
 
 // Landing page
 Route::get('/', LandingPage::class)->name('index');
