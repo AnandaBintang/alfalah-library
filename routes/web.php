@@ -30,9 +30,6 @@ use App\Livewire\Auth\VerifyNotice;
 use App\Livewire\Admin\ResponsiScanner;
 
 
-// Scanner page
-Route::get('/responsi', ResponsiScanner::class)->name('responsi.scanner');
-
 // Landing page
 Route::get('/', LandingPage::class)->name('index');
 
@@ -106,6 +103,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
   Route::get('/library-card/print-bulk', [LibraryCardController::class, 'printBulk'])
     ->name('library-card.print-bulk');
+
+  // Scanner page
+  Route::get('/responsi', ResponsiScanner::class)->name('responsi.scanner');
 });
 
 // Verify email
