@@ -17,6 +17,7 @@
   "dependencies": {
     "@preline/overlay": "^3.2.3",
     "@tailwindcss/typography": "^0.5.16",
+    "html5-qrcode": "^2.3.8",
     "preline": "^3.0.1",
     "sweetalert2": "^11.22.0",
     "vanilla-calendar-pro": "^3.0.4"
